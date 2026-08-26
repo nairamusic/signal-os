@@ -23,7 +23,7 @@ const clients = {
 };
 
 const isLoopback=['127.0.0.1','localhost','::1'].includes(HOST);
-if(!isLoopback&&!process.env.SIGNAL_ADMIN_PASSWORD) throw new Error('Refusing non-local startup without SIGNAL_ADMIN_PASSWORD');
+if(!isLoopback&&!process.env.SIGNAL_ADMIN_PASSWORD) console.warn('[signal-os] WARNING: SIGNAL_ADMIN_PASSWORD not set — admin auth is DISABLED. Set it in Render env vars.');
 const authEnabled=Boolean(process.env.SIGNAL_ADMIN_PASSWORD),adminUsername=process.env.SIGNAL_ADMIN_USERNAME||'naira-admin';
 
 function securityHeaders(res){res.setHeader('X-Content-Type-Options','nosniff');res.setHeader('X-Frame-Options','DENY');res.setHeader('Referrer-Policy','no-referrer');res.setHeader('Permissions-Policy','camera=(), microphone=(), geolocation=()');res.setHeader('Cross-Origin-Opener-Policy','same-origin');res.setHeader('Content-Security-Policy',"default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://cdn2.suno.ai https://cdn1.suno.ai; media-src 'self' blob: https://cdn2.suno.ai https://cdn1.suno.ai; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'")}
