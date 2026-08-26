@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: signal-os-api
+    env: node
+    plan: free
+    buildCommand: echo "no build step"
+    startCommand: node --env-file-if-exists=.env.production server.js
+    envVars:
+      - key: PORT
+        fromService:
+          type: web
+          name: signal-os-api
+          envVarKey: PORT
+      - key: HOST
+        value: 0.0.0.0
+      - key: WP_BASE_URL
+        value: https://nairamusic.com
+      - key: NMC_SIGNAL_KEY
+        value: b84194506b3a89bd92dc8404c21540bd31b89e2bfb63619d
+      - key: SIGNAL_ADMIN_USERNAME
+        value: naira-admin
+      - key: SIGNAL_ADMIN_PASSWORD
+        sync: false

@@ -1,0 +1,93 @@
+/* Artist quick info row */
+.artist-quick-info{display:flex;flex-wrap:wrap;gap:0;border:1px solid var(--line);border-radius:3px;margin-bottom:12px;overflow:hidden}
+.artist-quick-info span{flex:1 1 160px;padding:10px 14px;border-right:1px solid var(--line)}
+.artist-quick-info span:last-child{border-right:none}
+.artist-quick-info small{display:block;font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}
+.artist-quick-info b{font-size:.82rem;color:var(--text)}
+/* Prompt fields */
+.prompt-field{border-top:1px solid var(--line)!important;padding-top:14px;margin-top:4px}
+.prompt-field-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.prompt-text{font-size:.8rem;line-height:1.65;color:var(--muted);background:#0d0d0d;border:1px solid var(--line);border-radius:3px;padding:12px;white-space:pre-wrap;word-break:break-word;max-height:200px;overflow-y:auto}
+/* Site sync panel */
+.site-sync-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:0}
+.site-metric{background:var(--surface);border:1px solid var(--line);border-radius:3px;padding:14px 16px}
+.site-metric.offline{opacity:.55}
+.site-metric strong{display:block;font:700 1.4rem monospace;color:var(--text);margin-bottom:2px}
+.site-metric small{display:block;font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}
+.site-metric span{font-size:.72rem;color:var(--muted)}
+.submission-row{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-top:1px solid var(--line)}
+.submission-row div b{font-size:.85rem}
+.submission-row div small{display:block;color:var(--muted);font-size:.72rem}
+.muted-note{color:var(--muted);font-size:.8rem;padding:6px 0}
+@media(max-width:800px){.site-sync-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:480px){.site-sync-grid{grid-template-columns:1fr}}
+.artist-profile-links{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.artist-profile-links a,.artist-profile-links span{padding:6px 8px;border:1px solid var(--line);color:var(--muted);font:9px monospace;text-decoration:none}.artist-profile-links a{color:var(--gold)}.integration-meta .artist-route{border-color:#5d471a;color:var(--amber)}.integration-meta .artist-route.linked{border-color:#28583a;color:var(--green)}.avatar{display:grid;place-items:center}
+/* NMC Bible Foundation panels */
+.bible-foundation{display:flex;flex-direction:column;gap:6px;margin-bottom:20px}
+.bible-panel{border:1px solid var(--line);border-radius:3px;background:var(--surface);overflow:hidden}
+.bible-panel summary{display:flex;align-items:center;gap:10px;padding:12px 16px;cursor:pointer;list-style:none;user-select:none}
+.bible-panel summary::-webkit-details-marker{display:none}
+.bible-panel summary::before{content:'›';font-size:1.1rem;color:var(--muted);transition:transform .15s;display:inline-block;flex-shrink:0}
+.bible-panel[open] summary::before{transform:rotate(90deg)}
+.bible-panel summary .eyebrow{font-size:.65rem;color:var(--gold);letter-spacing:.08em;font-weight:700;text-transform:uppercase;margin:0}
+.bible-summary-sub{font-size:.72rem;color:var(--muted);font-weight:400}
+.bible-content{padding:4px 16px 16px;border-top:1px solid var(--line)}
+.bible-content p{font-size:.83rem;line-height:1.65;color:var(--text);margin:.75rem 0}
+.bible-content p:first-child{margin-top:.75rem}
+.bible-model{font-size:.76rem;color:var(--muted);font-style:italic}
+.bible-banned{font-size:.75rem;color:var(--amber);background:#5d471a22;border:1px solid #5d471a55;border-radius:3px;padding:8px 12px;margin-top:1rem}
+.nmc-code-list{margin:.75rem 0;padding-left:1.5rem;display:flex;flex-direction:column;gap:.6rem}
+.nmc-code-list li{font-size:.83rem;line-height:1.6;color:var(--text)}
+/* Energy Spectrum */
+.spectrum-grid{display:flex;flex-direction:column;gap:4px;margin-top:.75rem}
+.spectrum-row{display:grid;grid-template-columns:100px 1fr 80px;align-items:center;gap:12px;padding:6px 0;border-top:1px solid var(--line)}
+.spectrum-row:first-child{border-top:none}
+.spectrum-emotion{font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.spectrum-row strong{font-size:.82rem;color:var(--text)}
+.spectrum-bpm{font-size:.7rem;color:var(--gold);font-family:monospace;text-align:right}
+.collab-trios p{font-size:.82rem;line-height:1.55;margin:.3rem 0}
+/* Trinity mascots */
+.trinity-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:.75rem 0}
+.trinity-item{border:1px solid var(--line);border-radius:3px;padding:14px 12px;text-align:center}
+.trinity-symbol{font-size:1.5rem;display:block;margin-bottom:6px}
+.trinity-item strong{display:block;font-size:.85rem;color:var(--text);margin-bottom:4px}
+.trinity-item p{font-size:.75rem;color:var(--muted);margin:0;line-height:1.45}
+/* Artist backstory display */
+.canon-backstory{background:#0d0d0d;border:1px solid var(--line)!important;border-radius:3px;padding:14px!important}
+.canon-backstory .eyebrow{font-size:.62rem;letter-spacing:.08em;color:var(--gold);margin-bottom:8px;display:block}
+.canon-backstory p{font-size:.82rem;line-height:1.7;color:var(--text);margin:0}
+@media(max-width:700px){.trinity-grid{grid-template-columns:1fr}.spectrum-row{grid-template-columns:80px 1fr 70px}}
+/* Tracks by artist */
+.artist-track-group{border-top:1px solid var(--line);padding-top:10px;margin-top:2px}
+.artist-track-group:first-child{border-top:none;margin-top:0}
+.atg-head{display:flex;align-items:center;justify-content:space-between;padding:6px 0 8px;gap:8px}
+.atg-head b{font-size:.9rem;color:var(--text)}
+.atg-head small{display:block;font-size:.7rem;color:var(--muted);margin-top:1px}
+.atg-row{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:7px 0 7px 12px;border-top:1px solid var(--line);border-left:2px solid var(--line)}
+.atg-row:hover{border-left-color:var(--gold)}
+.atg-info b{font-size:.82rem;color:var(--text)}
+.atg-info small{display:block;font-size:.7rem;color:var(--muted)}
+.atg-actions{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.rotation-badge{font:700 .65rem/1 monospace;padding:3px 5px;border:1px solid var(--line);border-radius:2px;color:var(--muted);text-transform:uppercase}
+.rotation-badge.tier-a1,.rotation-badge.tier-a2{border-color:#5d471a;color:var(--gold)}
+.rotation-badge.tier-b{border-color:#28583a;color:var(--green)}
+.rotation-badge.tier-c,.rotation-badge.tier-d{border-color:var(--line);color:var(--muted)}
+.rotation-badge.tier-e{border-color:#444;color:#555}
+
+/* ── Bulk Release Scheduler ─────────────────────────────────────────────── */
+.scheduler-panel{margin-top:0}
+.scheduler-controls{display:flex;align-items:flex-end;gap:8px;flex-wrap:wrap}
+.scheduler-label{display:flex;flex-direction:column;gap:4px;font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.scheduler-label input,.scheduler-label select{font:inherit;background:var(--surface);border:1px solid var(--line);color:var(--text);padding:6px 10px;border-radius:3px;font-size:.82rem}
+.scheduler-list{display:flex;flex-direction:column;margin-top:16px;border:1px solid var(--line);border-radius:3px;overflow:hidden}
+.scheduler-row{display:grid;grid-template-columns:32px 1fr 120px 180px;align-items:center;gap:12px;padding:10px 14px;border-top:1px solid var(--line)}
+.scheduler-row:first-child{border-top:none}
+.scheduler-row:hover{background:var(--surface)}
+.scheduler-num{font:700 .65rem monospace;color:var(--muted)}
+.scheduler-info b{display:block;font-size:.83rem;color:var(--text)}
+.scheduler-info small{font-size:.7rem;color:var(--muted)}
+.scheduler-genre{font-size:.7rem;color:var(--gold);font-family:monospace}
+.scheduler-date input{width:100%;font:inherit;background:var(--surface);border:1px solid var(--line);color:var(--text);padding:6px 8px;border-radius:3px;font-size:.8rem}
+.scheduler-date input:focus{border-color:var(--gold);outline:none}
+.scheduler-date input.date-set{border-color:#28583a}
+@media(max-width:700px){.scheduler-row{grid-template-columns:1fr 1fr}.scheduler-num,.scheduler-genre{display:none}}

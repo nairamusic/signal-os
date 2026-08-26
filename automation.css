@@ -1,0 +1,10 @@
+.connector-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}.connector{display:grid;grid-template-columns:48px 1fr auto;align-items:center;gap:15px}.connector-icon{width:46px;height:46px;border:1px solid #554727;display:grid;place-items:center;color:var(--gold);font-weight:900}.connector h2{margin:0 0 5px}.connector small{color:var(--muted)}.connector-state{font:10px monospace;padding:7px 9px;border:1px solid var(--line)}.connector-state.live{color:var(--green);border-color:#28583a}.connector-state.dry{color:var(--amber);border-color:#5d471a}.automation-flow{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:12px;overflow:auto}.automation-flow span{font:10px monospace;white-space:nowrap;color:var(--text)}.automation-flow i{color:var(--gold);font-style:normal}.job-list{margin-top:18px}.job-row{display:grid;grid-template-columns:100px 1fr 120px 150px;gap:15px;align-items:center;padding:14px 0;border-top:1px solid var(--line)}.job-row code{color:var(--gold);font-size:10px}.job-row small{display:block;color:var(--muted);margin-top:4px}.job-state{font:10px monospace}.empty-state{color:var(--muted);font-size:12px}@media(max-width:800px){.connector-grid{grid-template-columns:1fr}.automation-flow{justify-content:flex-start}.job-row{grid-template-columns:75px 1fr 100px}.job-row>*:last-child{display:none}}
+#sunoRecordPanel{margin-top:12px}
+.suno-record-note{margin:0 0 1.4rem;color:var(--muted);font-size:.88rem;line-height:1.5}
+.suno-record-note a{color:var(--gold);text-decoration:none}
+.suno-record-note a:hover{text-decoration:underline}
+.suno-record-actions{grid-column:1/-1;display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-top:4px}
+.suno-record-result{font-size:.82rem;padding:6px 10px;border-radius:3px}
+.suno-record-result.pass{color:var(--green);background:#0e2018;border:1px solid #28583a}
+.suno-record-result.fail{color:#e55;background:#200e0e;border:1px solid #582828}
+.suno-record-result.amber{color:var(--amber);background:#1e1608;border:1px solid #5d471a}

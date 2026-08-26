@@ -1,0 +1,24 @@
+[
+  {
+    "id": "dc6288df-e15c-4088-bfc6-b35ca34c7cdc",
+    "trackId": "NMC-REIGN-004",
+    "artist": "REIGN",
+    "originalName": "obosi-doesnt-bow-master.wav",
+    "storedName": "dc6288df-e15c-4088-bfc6-b35ca34c7cdc.wav",
+    "mimeType": "audio/wav",
+    "size": 44,
+    "sha256": "8b8fbafe8679076454429756fa72f11d5f442c87381cc6a4285451d826a9e629",
+    "createdAt": "2026-08-23T23:08:30.998Z"
+  },
+  {
+    "id": "33b46661-9024-4b8d-abff-5c15727c3dc9",
+    "trackId": "NMC-REIGN-004",
+    "artist": "REIGN",
+    "originalName": "obosi-doesnt-bow-cover.png",
+    "storedName": "33b46661-9024-4b8d-abff-5c15727c3dc9.png",
+    "mimeType": "image/png",
+    "size": 69,
+    "sha256": "18ed33080443f2e2ca79eecd629e12d4636c9bc83543a4e45cb8dbe53e0b4be7",
+    "createdAt": "2026-08-23T23:08:47.742Z"
+  }
+]

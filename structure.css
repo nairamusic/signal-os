@@ -1,0 +1,53 @@
+.identity-strip {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto 1fr;
+  align-items: center;
+  gap: 12px;
+  margin: 12px 0;
+}
+
+.identity-strip article {
+  border: 1px solid var(--line);
+  background: #0d0d0b;
+  padding: 16px 18px;
+}
+
+.identity-strip span,
+.identity-strip b,
+.identity-strip small { display: block; }
+.identity-strip span { color: var(--gold); font: 9px monospace; letter-spacing: .15em; }
+.identity-strip b { margin: 6px 0; font-size: 14px; }
+.identity-strip small { color: var(--muted); font-size: 10px; }
+.identity-strip i { color: #51472e; font-style: normal; }
+
+.modal {
+  width: min(760px, calc(100% - 32px));
+  background: #0e0e0c;
+  color: var(--text);
+  border: 1px solid #5c4b29;
+  padding: 0;
+  box-shadow: 0 30px 100px #000;
+}
+
+.modal::backdrop { background: rgba(0,0,0,.82); backdrop-filter: blur(5px); }
+.modal form { padding: 26px; }
+.modal-head { display: flex; justify-content: space-between; gap: 20px; border-bottom: 1px solid var(--line); padding-bottom: 18px; margin-bottom: 18px; }
+.modal-head h2 { font-size: 30px; margin: 0; }
+.close-button { border: 0; background: none; color: var(--muted); font-size: 30px; cursor: pointer; }
+.modal-copy { color: var(--muted); font-size: 12px; line-height: 1.6; margin-bottom: 20px; }
+.modal .form-actions { margin-top: 20px; }
+.editor-actions { display: flex; align-items: center; justify-content: flex-end; gap: 8px; flex-wrap: wrap; }
+.track-context { display: flex; align-items: center; gap: 8px; border-right: 1px solid var(--line); padding-right: 12px; text-transform: none; letter-spacing: 0; }
+.track-context span { color: var(--muted); font-size: 9px; text-transform: uppercase; letter-spacing: .12em; white-space: nowrap; }
+.track-context select { width: 230px; padding: 8px 10px; font-size: 11px; }
+
+@media (max-width: 1050px) {
+  .identity-strip { grid-template-columns: 1fr; }
+  .identity-strip i { display: none; }
+}
+
+@media (max-width: 760px) {
+  .track-context span { display: none; }
+  .track-context { border: 0; padding: 0; }
+  .track-context select { width: 128px; }
+}

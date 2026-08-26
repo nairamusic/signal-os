@@ -1,0 +1,89 @@
+{
+  "exportedAt": "2026-08-24T11:23:14.859Z",
+  "track": {
+    "id": "NMC-REIGN-004",
+    "title": "Obosi Doesn't Bow",
+    "artist": "REIGN",
+    "status": "Suno Generation",
+    "score": 95
+  },
+  "splits": {
+    "participants": [
+      { "name": "Naira Music Limited", "role": "Label", "ipi": "", "master": 100, "publishing": 0 },
+      { "name": "REIGN", "role": "Artist", "ipi": "", "master": 0, "publishing": 100 }
+    ],
+    "metadata": { "isrc": "", "upc": "", "pro": "", "currency": "GBP" },
+    "locked": true
+  },
+  "releaseMetadata": {
+    "title": "Obosi Doesn't Bow",
+    "artist": "REIGN",
+    "version": "",
+    "releaseType": "Single",
+    "genre": "",
+    "secondaryGenre": "",
+    "language": "",
+    "explicit": "Explicit",
+    "pLine": "",
+    "cLine": "",
+    "songwriters": "",
+    "producers": "",
+    "releaseDate": "",
+    "territories": "Worldwide",
+    "label": "Naira Music",
+    "catalogue": "NMC-REIGN-004",
+    "locked": true
+  },
+  "rightsData": [
+    ["Legal title", true, "Obosi Doesn't Bow"],
+    ["Primary artist", true, "REIGN"],
+    ["Lyrics / direction", true, "NMC Creative Director"],
+    ["Suno account owner", true, "Confirmed"],
+    ["Subscription tier", true, "Confirmed"],
+    ["Generation URL", true, "Confirmed"],
+    ["Selected output ID", true, "Confirmed"],
+    ["Master ownership", true, "Naira Music Limited"],
+    ["Publishing ownership", true, "Pending split confirmation"],
+    ["Artwork rights", true, "Confirmed"],
+    ["Sample status", true, "No samples declared"],
+    ["Explicit status", true, "Explicit"]
+  ],
+  "campaign": {
+    "assets": {
+      "master": true, "cover": true, "video": true,
+      "vertical": true, "metadata": true, "copy": true
+    },
+    "built": true,
+    "manifest": {
+      "id": "e3781b22-7300-4f6d-b000-61dc15e410e9",
+      "createdAt": "2026-08-24T10:37:09.048Z",
+      "label": "Naira Music",
+      "collective": "NMC — Naira Music Cartel",
+      "radio": "NMC Signal",
+      "release": {
+        "trackId": "NMC-REIGN-004",
+        "title": "Obosi Doesn't Bow",
+        "artist": "REIGN",
+        "explicit": "Explicit"
+      },
+      "platforms": ["DistroKid", "YouTube", "Facebook", "Instagram", "TikTok", "Spotify", "NairaMusic.com", "NMC Signal", "SoundCloud"],
+      "assets": ["WAV master", "Cover artwork", "YouTube master", "Vertical social cut", "Release metadata", "Campaign copy"],
+      "mode": "PACKAGE_ONLY",
+      "notice": "No content has been uploaded or published. OAuth, account approval and final human release approval are required."
+    },
+    "approvals": { "label": true, "artist": true, "rights": true, "content": true },
+    "copy": {
+      "YouTube": "REIGN — Obosi Doesn't Bow\n\nThe official Naira Music release. Subscribe for new NMC music and NMC Signal broadcasts.\n\n#REIGN #NairaMusic #NMCSignal",
+      "Facebook": "New music from REIGN. \"Obosi Doesn't Bow\" is coming through Naira Music. Watch, share and tell us where you're listening from.\n\n#NairaMusic #NMC",
+      "Instagram": "Obosi Doesn't Bow. The new signal from REIGN.\n\nSave it. Share it. Run it up.\n\n#NairaMusic #NMC #NewMusic",
+      "TikTok": "REIGN — Obosi Doesn't Bow. Which line hit first? #NairaMusic #NMC #NewMusic",
+      "Spotify": "REIGN — Obosi Doesn't Bow. New music from Naira Music. Listen, save and add it to your playlist."
+    },
+    "smartLink": {
+      "url": "https://nairamusic.com/go/reign-obosi-doesn-t-bow",
+      "destinations": ["Spotify", "Apple Music", "YouTube Music", "Amazon Music", "Deezer", "TIDAL"],
+      "clicks": 0,
+      "createdAt": "2026-08-23T18:29:39.266Z"
+    }
+  }
+}
