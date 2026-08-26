@@ -22,6 +22,8 @@ const clients = {
   wordpress: createWordPressClient(process.env)
 };
 
+const WP_BASE=(process.env.WP_BASE_URL||'https://nairamusic.com').replace(/\/$/,'');
+const SIGNAL_KEY=process.env.NMC_SIGNAL_KEY||'';
 const isLoopback=['127.0.0.1','localhost','::1'].includes(HOST);
 if(!isLoopback&&!process.env.SIGNAL_ADMIN_PASSWORD) console.warn('[signal-os] WARNING: SIGNAL_ADMIN_PASSWORD not set — admin auth is DISABLED. Set it in Render env vars.');
 const authEnabled=Boolean(process.env.SIGNAL_ADMIN_PASSWORD),adminUsername=process.env.SIGNAL_ADMIN_USERNAME||'naira-admin';
@@ -125,11 +127,9 @@ async function api(req,res,url) {
   }
   // Radio status — proxies nmcsignal/v1/status (radio sync-state + pending queue)
   if (req.method==='GET' && url.pathname==='/api/radio/status') {
-    const wpBase=(process.env.WP_BASE_URL||'https://nairamusic.com').replace(/\/$/,'');
-    const signalKey=process.env.NMC_SIGNAL_KEY||'';
-    if(!signalKey) return json(res,200,{dryRun:true,message:'NMC_SIGNAL_KEY not configured'});
+    if(!SIGNAL_KEY) return json(res,200,{dryRun:true,message:'NMC_SIGNAL_KEY not configured'});
     try {
-      const r=await fetch(`${wpBase}/wp-json/nmcsignal/v1/status`,{headers:{'X-Signal-Key':signalKey}});
+      const r=await fetch(`${WP_BASE}/wp-json/nmcsignal/v1/status`,{headers:{'X-Signal-Key':SIGNAL_KEY}});
       if(!r.ok){const t=await r.text();return json(res,502,{error:`WP ${r.status}: ${t}`});}
       return json(res,200,await r.json());
     } catch(error){return json(res,502,{error:error.message});}
@@ -138,23 +138,21 @@ async function api(req,res,url) {
   if (req.method==='POST' && url.pathname==='/api/radio/publish') {
     const input=await body(req);
     if(!input.post_id) return json(res,422,{error:'post_id is required'});
-    const wpBase=(process.env.WP_BASE_URL||'https://nairamusic.com').replace(/\/$/,'');
-    const signalKey=process.env.NMC_SIGNAL_KEY||'';
-    if(!signalKey) return json(res,200,{dryRun:true,message:'NMC_SIGNAL_KEY not configured — cannot publish'});
+    if(!SIGNAL_KEY) return json(res,200,{dryRun:true,message:'NMC_SIGNAL_KEY not configured — cannot publish'});
     try {
-      const r=await fetch(`${wpBase}/wp-json/nmcsignal/v1/publish`,{method:'POST',headers:{'X-Signal-Key':signalKey,'Content-Type':'application/json'},body:JSON.stringify({post_id:input.post_id})});
+      const r=await fetch(`${WP_BASE}/wp-json/nmcsignal/v1/publish`,{method:'POST',headers:{'X-Signal-Key':SIGNAL_KEY,'Content-Type':'application/json'},body:JSON.stringify({post_id:input.post_id})});
       if(!r.ok){const t=await r.text();throw new Error(`WP API ${r.status}: ${t}`);}
       return json(res,200,await r.json());
     } catch(error){return json(res,502,{error:error.message});}
   }
   // ── SITE SYNC ROUTES ─────────────────────────────────────────────────────
-  if (req.method==='GET' && url.pathname==='/api/site/artists') {const wpBase=(process.env.WP_BASE_URL||'https://nairamusic.com').replace(/\/$/,'');const signalKey=process.env.NMC_SIGNAL_KEY||'';if(!signalKey)return json(res,200,{dryRun:true,artists:[],message:'NMC_SIGNAL_KEY not configured'});try{const r=await fetch(`${wpBase}/wp-json/nmcsignal/v1/artists`,{headers:{'X-Signal-Key':signalKey}});if(!r.ok){const t=await r.text();return json(res,502,{error:`WP ${r.status}: ${t}`});}return json(res,200,await r.json())}catch(error){return json(res,502,{error:error.message})}}
-  if (req.method==='POST' && url.pathname==='/api/site/artist-push') {const input=await body(req);const wpBase=(process.env.WP_BASE_URL||'https://nairamusic.com').replace(/\/$/,'');const signalKey=process.env.NMC_SIGNAL_KEY||'';if(!signalKey)return json(res,200,{dryRun:true,message:'NMC_SIGNAL_KEY not configured'});try{const r=await fetch(`${wpBase}/wp-json/nmcsignal/v1/artist-push`,{method:'POST',headers:{'X-Signal-Key':signalKey,'Content-Type':'application/json'},body:JSON.stringify(input)});if(!r.ok){const t=await r.text();throw new Error(`WP API ${r.status}: ${t}`);}return json(res,200,await r.json())}catch(error){return json(res,502,{error:error.message})}}
-  if (req.method==='GET' && url.pathname==='/api/site/catalogue') {const wpBase=(process.env.WP_BASE_URL||'https://nairamusic.com').replace(/\/$/,'');const signalKey=process.env.NMC_SIGNAL_KEY||'';if(!signalKey)return json(res,200,{dryRun:true,tracks:[],total:0,published:0,drafts:0,total_streams:0});try{const r=await fetch(`${wpBase}/wp-json/nmcsignal/v1/catalogue`,{headers:{'X-Signal-Key':signalKey}});if(!r.ok){const t=await r.text();return json(res,502,{error:`WP ${r.status}: ${t}`});}return json(res,200,await r.json())}catch(error){return json(res,502,{error:error.message})}}
-  if (req.method==='GET' && url.pathname==='/api/site/submissions') {const wpBase=(process.env.WP_BASE_URL||'https://nairamusic.com').replace(/\/$/,'');const signalKey=process.env.NMC_SIGNAL_KEY||'';if(!signalKey)return json(res,200,{dryRun:true,submissions:[],count:0});try{const r=await fetch(`${wpBase}/wp-json/nmcsignal/v1/submissions`,{headers:{'X-Signal-Key':signalKey}});if(!r.ok){const t=await r.text();return json(res,502,{error:`WP ${r.status}: ${t}`});}return json(res,200,await r.json())}catch(error){return json(res,502,{error:error.message})}}
-  if (req.method==='GET' && url.pathname==='/api/site/shop') {const wpBase=(process.env.WP_BASE_URL||'https://nairamusic.com').replace(/\/$/,'');const signalKey=process.env.NMC_SIGNAL_KEY||'';if(!signalKey)return json(res,200,{dryRun:true,woocommerce:false});try{const r=await fetch(`${wpBase}/wp-json/nmcsignal/v1/shop-stats`,{headers:{'X-Signal-Key':signalKey}});if(!r.ok){const t=await r.text();return json(res,502,{error:`WP ${r.status}: ${t}`});}return json(res,200,await r.json())}catch(error){return json(res,502,{error:error.message})}}
-  if (req.method==='GET' && url.pathname==='/api/radio/playlist') {const wpBase=(process.env.WP_BASE_URL||'https://nairamusic.com').replace(/\/$/,'');const signalKey=process.env.NMC_SIGNAL_KEY||'';try{const r=await fetch(`${wpBase}/wp-json/nmc-radio/v1/playlist`,{headers:signalKey?{'X-Signal-Key':signalKey}:{}});if(!r.ok)return json(res,200,{playlist:[],note:`Radio playlist endpoint returned ${r.status}`});const raw=await r.json();const playlist=Array.isArray(raw)?raw:(raw.playlist||[]);return json(res,200,{playlist,count:playlist.length})}catch(error){return json(res,200,{playlist:[],error:error.message})}}
-  if (req.method==='GET' && url.pathname==='/api/radio/listeners') {const wpBase=(process.env.WP_BASE_URL||'https://nairamusic.com').replace(/\/$/,'');try{const r=await fetch(`${wpBase}/wp-json/nmc-radio/v1/listeners/count`);if(!r.ok)return json(res,200,{count:0});return json(res,200,await r.json())}catch(error){return json(res,200,{count:0})}}
+  if (req.method==='GET' && url.pathname==='/api/site/artists') {if(!SIGNAL_KEY)return json(res,200,{dryRun:true,artists:[],message:'NMC_SIGNAL_KEY not configured'});try{const r=await fetch(`${WP_BASE}/wp-json/nmcsignal/v1/artists`,{headers:{'X-Signal-Key':SIGNAL_KEY}});if(!r.ok){const t=await r.text();return json(res,502,{error:`WP ${r.status}: ${t}`});}return json(res,200,await r.json())}catch(error){return json(res,502,{error:error.message})}}
+  if (req.method==='POST' && url.pathname==='/api/site/artist-push') {const input=await body(req);if(!SIGNAL_KEY)return json(res,200,{dryRun:true,message:'NMC_SIGNAL_KEY not configured'});try{const r=await fetch(`${WP_BASE}/wp-json/nmcsignal/v1/artist-push`,{method:'POST',headers:{'X-Signal-Key':SIGNAL_KEY,'Content-Type':'application/json'},body:JSON.stringify(input)});if(!r.ok){const t=await r.text();throw new Error(`WP API ${r.status}: ${t}`);}return json(res,200,await r.json())}catch(error){return json(res,502,{error:error.message})}}
+  if (req.method==='GET' && url.pathname==='/api/site/catalogue') {if(!SIGNAL_KEY)return json(res,200,{dryRun:true,tracks:[],total:0,published:0,drafts:0,total_streams:0});try{const r=await fetch(`${WP_BASE}/wp-json/nmcsignal/v1/catalogue`,{headers:{'X-Signal-Key':SIGNAL_KEY}});if(!r.ok){const t=await r.text();return json(res,502,{error:`WP ${r.status}: ${t}`});}return json(res,200,await r.json())}catch(error){return json(res,502,{error:error.message})}}
+  if (req.method==='GET' && url.pathname==='/api/site/submissions') {if(!SIGNAL_KEY)return json(res,200,{dryRun:true,submissions:[],count:0});try{const r=await fetch(`${WP_BASE}/wp-json/nmcsignal/v1/submissions`,{headers:{'X-Signal-Key':SIGNAL_KEY}});if(!r.ok){const t=await r.text();return json(res,502,{error:`WP ${r.status}: ${t}`});}return json(res,200,await r.json())}catch(error){return json(res,502,{error:error.message})}}
+  if (req.method==='GET' && url.pathname==='/api/site/shop') {if(!SIGNAL_KEY)return json(res,200,{dryRun:true,woocommerce:false});try{const r=await fetch(`${WP_BASE}/wp-json/nmcsignal/v1/shop-stats`,{headers:{'X-Signal-Key':SIGNAL_KEY}});if(!r.ok){const t=await r.text();return json(res,502,{error:`WP ${r.status}: ${t}`});}return json(res,200,await r.json())}catch(error){return json(res,502,{error:error.message})}}
+  if (req.method==='GET' && url.pathname==='/api/radio/playlist') {try{const r=await fetch(`${WP_BASE}/wp-json/nmc-radio/v1/playlist`,{headers:SIGNAL_KEY?{'X-Signal-Key':SIGNAL_KEY}:{}});if(!r.ok)return json(res,200,{playlist:[],note:`Radio playlist endpoint returned ${r.status}`});const raw=await r.json();const playlist=Array.isArray(raw)?raw:(raw.playlist||[]);return json(res,200,{playlist,count:playlist.length})}catch(error){return json(res,200,{playlist:[],error:error.message})}}
+  if (req.method==='GET' && url.pathname==='/api/radio/listeners') {try{const r=await fetch(`${WP_BASE}/wp-json/nmc-radio/v1/listeners/count`);if(!r.ok)return json(res,200,{count:0});return json(res,200,await r.json())}catch(error){return json(res,200,{count:0})}}
   if (req.method==='POST' && url.pathname==='/api/jobs/generate') {
     const input=await body(req);
     if (!input.trackId || !input.title || !input.artist || !input.styles) return json(res,422,{error:'trackId, title, artist and styles are required'});
