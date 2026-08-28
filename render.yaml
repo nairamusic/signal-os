@@ -4,7 +4,7 @@ services:
     env: node
     plan: free
     buildCommand: echo "no build step"
-    startCommand: node --env-file-if-exists=.env.production server.js
+    startCommand: node server.js
     envVars:
       - key: PORT
         fromService:
