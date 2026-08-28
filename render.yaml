@@ -16,7 +16,7 @@ services:
       - key: WP_BASE_URL
         value: https://nairamusic.com
       - key: NMC_SIGNAL_KEY
-        value: b84194506b3a89bd92dc8404c21540bd31b89e2bfb63619d
+        sync: false
       - key: SIGNAL_ADMIN_USERNAME
         value: naira-admin
       - key: SIGNAL_ADMIN_PASSWORD
