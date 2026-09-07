@@ -8,18 +8,25 @@
 
 const DEFAULT_WP_BASE = "https://nairamusic.com";
 
-// Map an incoming /api/... path to the WordPress REST endpoint it proxies.
-function wpTarget(path) {
-  switch (path) {
-    case "site/submissions": return "/wp-json/nmcsignal/v1/submissions";
-    case "site/artists":     return "/wp-json/nmcsignal/v1/artists";
-    case "site/catalogue":   return "/wp-json/nmcsignal/v1/catalogue";
-    case "site/shop":        return "/wp-json/nmcsignal/v1/shop-stats";
-    case "site/artist-push": return "/wp-json/nmcsignal/v1/artist-push";
-    case "radio/playlist":   return "/wp-json/nmc-radio/v1/playlist";
-    case "radio/listeners":  return "/wp-json/nmc-radio/v1/listeners/count";
-    default: return null;
-  }
+// Static path → { wp: WordPress endpoint, methods: allowed }.
+const ROUTES = {
+  "site/submissions":      { wp: "/wp-json/nmcsignal/v1/submissions",      methods: ["GET"] },
+  "site/submissions-full": { wp: "/wp-json/nmcsignal/v1/submissions-full", methods: ["GET"] },
+  "site/artists":          { wp: "/wp-json/nmcsignal/v1/artists",          methods: ["GET"] },
+  "site/artist-push":      { wp: "/wp-json/nmcsignal/v1/artist-push",      methods: ["POST"] },
+  "site/catalogue":        { wp: "/wp-json/nmcsignal/v1/catalogue",        methods: ["GET"] },
+  "site/shop":             { wp: "/wp-json/nmcsignal/v1/shop-stats",       methods: ["GET"] },
+  "radio/status":          { wp: "/wp-json/nmcsignal/v1/status",           methods: ["GET"] },
+  "radio/publish":         { wp: "/wp-json/nmcsignal/v1/publish",          methods: ["POST"] },
+  "radio/playlist":        { wp: "/wp-json/nmc-radio/v1/playlist",         methods: ["GET"] },
+  "radio/listeners":       { wp: "/wp-json/nmc-radio/v1/listeners/count",  methods: ["GET"] },
+};
+
+// Resolve a request path to a WordPress endpoint (handles the dynamic review route too).
+function resolve(path) {
+  const review = path.match(/^site\/submissions\/(\d+)\/review$/);
+  if (review) return { wp: `/wp-json/nmcsignal/v1/submissions/${review[1]}/review`, methods: ["POST"] };
+  return ROUTES[path] || null;
 }
 
 function json(body, status = 200) {
@@ -35,21 +42,22 @@ export async function onRequest(context) {
   const base = (env.WP_BASE_URL || DEFAULT_WP_BASE).replace(/\/+$/, "");
   const key = env.NMC_SIGNAL_KEY || "";
 
-  const target = wpTarget(path);
+  const route = resolve(path);
 
-  // Routes that need the stateful Render backend (state, jobs, campaigns, publish,
-  // assets, suno) are not implemented here — return a clear, non-breaking stub.
-  if (!target) {
+  // Stateful routes (state, jobs, campaigns, assets, suno) live on the Node backend,
+  // not here — return a clear, non-breaking response instead of a hard 404.
+  if (!route) {
     return json({ error: "Not served by Cloudflare Function", path: `/api/${path}` }, 404);
   }
-
+  if (!route.methods.includes(request.method)) {
+    return json({ error: "Method not allowed", path: `/api/${path}` }, 405);
+  }
   if (!key) {
-    // Mirror the backend's dry-run shape so the UI degrades gracefully.
-    return json({ dryRun: true, message: "NMC_SIGNAL_KEY not configured", submissions: [], artists: [], tracks: [], count: 0 });
+    return json({ dryRun: true, message: "NMC_SIGNAL_KEY not configured", submissions: [], artists: [], tracks: [], playlist: [], count: 0 });
   }
 
   const url = new URL(request.url);
-  const wpUrl = base + target + (url.search || "");
+  const wpUrl = base + route.wp + (url.search || "");
 
   const init = {
     method: request.method,
