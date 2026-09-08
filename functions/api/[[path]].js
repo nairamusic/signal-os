@@ -59,6 +59,52 @@ export async function onRequest(context) {
     });
   }
 
+  // Radio now-playing panel. The frontend reads d.radio.current_item / next_item /
+  // playlist_length / current_show and d.track_count. WP's nmcsignal/v1/status only
+  // returns A&R sync data, so compose the real radio state from the nmc-radio endpoints.
+  if (path === "radio/status") {
+    const wp = (p, hdr) => fetch(base + p, { headers: hdr || { Accept: "application/json" } })
+      .then((r) => (r.ok ? r.json() : null)).catch(() => null);
+    const [now, playlistRaw, sched, statusData] = await Promise.all([
+      wp("/wp-json/nmc-radio/v1/now"),
+      wp("/wp-json/nmc-radio/v1/playlist"),
+      wp("/wp-json/nmc-radio/v1/schedule/current"),
+      key ? wp("/wp-json/nmcsignal/v1/status", { "X-Signal-Key": key, Accept: "application/json" }) : Promise.resolve(null),
+    ]);
+    const list = Array.isArray(playlistRaw) ? playlistRaw : (playlistRaw && playlistRaw.playlist) || [];
+    const cur = now || {};
+    const norm = (s) => (s || "").toString().trim().toLowerCase();
+    let idx = list.findIndex((t) => norm(t.title) === norm(cur.title));
+    const en = idx >= 0 ? list[idx] : {};
+    const current_item = cur.title ? {
+      title: cur.title,
+      artist_name: cur.artist || en.artist || "",
+      genre: en.genre && en.genre !== "track" ? en.genre : (cur.genre && cur.genre !== "track" ? cur.genre : ""),
+      bpm: en.bpm || null,
+      duration: en.duration || null,
+      cover: cur.cover || en.cover || "",
+    } : null;
+    const nx = idx >= 0 && list.length ? list[(idx + 1) % list.length] : (list[0] || null);
+    const next_item = nx ? { title: nx.title || "", artist_name: nx.artist || "" } : {};
+    let remaining = 0;
+    if (current_item && en.duration && cur.started_at) {
+      const startMs = Date.parse(String(cur.started_at).replace(" ", "T") + "Z");
+      if (!isNaN(startMs)) {
+        const elapsed = (Date.now() - startMs) / 1000;
+        remaining = Math.max(0, Math.round(en.duration - (((elapsed % en.duration) + en.duration) % en.duration)));
+      } else remaining = en.duration;
+    }
+    const radio = {
+      current_item,
+      next_item,
+      remaining,
+      playlist_length: list.length,
+      current_show: sched && sched.current ? { name: sched.current.name } : null,
+    };
+    const pending = statusData && Array.isArray(statusData.pending) ? statusData.pending : [];
+    return json({ radio, track_count: list.length, pending });
+  }
+
   const url = new URL(request.url);
   const route = resolve(path);
 
