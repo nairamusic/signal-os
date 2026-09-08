@@ -292,7 +292,7 @@ async function renderRadio(){
     toast('Radio status unavailable: '+e.message);
   }
 }
-($('#refreshRadio')||{}).onclick=()=>renderRadio();
+($('#refreshRadio')||{}).onclick=()=>{renderRadio();renderLeaderboard();};
 // ── RADIO PLAYLIST ─────────────────────────────────────────────────────────
 async function renderRadioPlaylist(){const el=$('#radioPlaylistPanel');if(!el)return;try{const d=await api('/api/radio/playlist');const list=d.playlist||[];if(!list.length){el.innerHTML='<p class="radio-empty">Playlist not available — radio endpoint may not expose full tracklist.</p>';return;}el.innerHTML=list.map((t,i)=>`<div class="rpl-row"><span class="rpl-num">${String(i+1).padStart(3,'0')}</span><div class="rpl-info"><b>${t.title||'—'}</b><small>${t.artist_name||t.artist||'—'}${t.bpm?' · '+t.bpm+' BPM':''}${t.genre?' · '+t.genre:''}</small></div><span class="rpl-dur">${t.duration?fmtSecs(t.duration):'—'}</span></div>`).join('')}catch(error){if(el)el.innerHTML=`<p class="fail">${error.message}</p>`}}
 // ── SITE SYNC ──────────────────────────────────────────────────────────────
@@ -430,9 +430,11 @@ if($('#syncTracksBtn'))($('#syncTracksBtn')||{}).onclick=async()=>{toast('Syncin
 if($('#refreshPlaylistBtn'))($('#refreshPlaylistBtn')||{}).onclick=()=>renderRadioPlaylist();
 if($('#refreshTracksByArtistBtn'))($('#refreshTracksByArtistBtn')||{}).onclick=()=>renderTracksByArtist();
 // Auto-refresh when the signal view is opened
-{const btn=$('[data-view="signal"]');if(btn){const _orig=btn.onclick;btn.onclick=()=>{if(_orig)_orig.call(btn);renderRadio();renderRadioPlaylist();renderTracksByArtist();};}}
+{const btn=$('[data-view="signal"]');if(btn){const _orig=btn.onclick;btn.onclick=()=>{if(_orig)_orig.call(btn);renderRadio();renderRadioPlaylist();renderTracksByArtist();renderLeaderboard();};}}
 // A&R site panel loads via navigate('ar'); Command no longer hosts it.
 
+// ── LEADERBOARD (live charts from nairamusic.com) ────────────────────────────
+async function renderLeaderboard(){const panel=$('#leaderboardPanel');if(!panel)return;try{const d=await api('/api/radio/charts');const list=Array.isArray(d)?d:(d&&(d.tracks||d.top_tracks))||[];if(!list.length){panel.innerHTML='<p class="radio-empty">No chart data yet — plays are still accumulating.</p>';return;}panel.innerHTML=list.slice(0,20).map((t,i)=>{const rank=t.rank||i+1;const mv=t.movement||{};const dir=mv.direction==='up'?'▲ '+(mv.places||''):mv.direction==='down'?'▼ '+(mv.places||''):mv.direction==='new'?'NEW':'–';const col=mv.direction==='up'?'var(--green,#3fbf6a)':mv.direction==='down'?'#d9534f':'var(--muted,#9a9)';const plays=t.play_count!=null?t.play_count:(t.plays!=null?t.plays:(t.streams||0));const cover=t.cover||'';return `<div style="display:flex;align-items:center;gap:10px;padding:8px 4px;border-bottom:1px solid var(--line,#2a2a1f)"><span style="min-width:24px;font-weight:700;color:var(--gold,#d8b45a);font-variant-numeric:tabular-nums">${rank}</span>${cover?`<img src="${cover}" alt="" style="width:34px;height:34px;border-radius:5px;object-fit:cover">`:'<span style="width:34px;height:34px;display:grid;place-items:center;background:#1a1a12;border-radius:5px">♫</span>'}<div style="flex:1;min-width:0"><b style="display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${t.title||'Untitled'}</b><small style="color:var(--muted,#9a9)">${t.artist||''}</small></div><span style="min-width:48px;text-align:right;font-size:.75rem;color:${col}">${dir}</span><span style="min-width:70px;text-align:right;font-variant-numeric:tabular-nums;color:var(--muted,#9a9);font-size:.8rem">${plays} ${plays===1?'play':'plays'}</span></div>`}).join('');}catch(e){panel.innerHTML=`<p class="fail">Leaderboard unavailable: ${e.message}</p>`;}}
 // ── AUTO-POLLING ─────────────────────────────────────────────────────────────
 // Radio refreshes every 20s when signal view is visible; catalogue sync follows Settings.
 setInterval(()=>{if(document.querySelector('#signal.view.active'))renderRadio();},20000);
@@ -441,4 +443,4 @@ let lastCataloguePoll=Date.now();setInterval(()=>{const settings=ensureSettings(
 if(!data.audit.length)logActivity('SYSTEM INITIALISED','SIGNAL//OS ledger created');renderOverview();renderArtists();renderBibleFoundation();renderArtistOptions();renderTrackSelector();renderGenerations();renderRotation();renderCatalogue();loadTrackForm();loadStorageStatus();countPrompt();renderSettings();save();
 if(location.hash&&titles[location.hash.slice(1)])navigate(location.hash.slice(1));
 // Startup sync follows Settings; radio and site health still initialise locally.
-setTimeout(()=>{renderRadio();renderSitePanel();if(ensureSettings().syncOnStart)syncTracksFromWP(true).then(()=>{renderCatalogue();renderTracksByArtist()});else renderTracksByArtist();},1200);
+setTimeout(()=>{renderRadio();renderLeaderboard();renderSitePanel();if(ensureSettings().syncOnStart)syncTracksFromWP(true).then(()=>{renderCatalogue();renderTracksByArtist()});else renderTracksByArtist();},1200);

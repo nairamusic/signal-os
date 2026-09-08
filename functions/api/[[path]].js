@@ -22,6 +22,9 @@ const ROUTES = {
   "radio/publish":         { wp: "/wp-json/nmcsignal/v1/publish",          methods: ["POST"] },
   "radio/playlist":        { wp: "/wp-json/nmc-radio/v1/playlist",         methods: ["GET"] },
   "radio/listeners":       { wp: "/wp-json/nmc-radio/v1/listeners/count",  methods: ["GET"] },
+  "radio/charts":          { wp: "/wp-json/nmc/v1/charts",                 methods: ["GET"] },
+  "radio/leaderboard":     { wp: "/wp-json/nmc/v1/leaderboard",            methods: ["GET"] },
+  "radio/listener-count":  { wp: "/wp-json/nmc/v1/listener-count",         methods: ["GET"] },
 };
 
 // Resolve a request path to a WordPress endpoint (handles the dynamic review route too).

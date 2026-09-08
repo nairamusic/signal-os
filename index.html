@@ -335,7 +335,7 @@
           <article class="panel radio-card">
             <div><p class="eyebrow">HOW TRACKS ENTER ROTATION</p></div>
             <ol style="margin:12px 0 0;padding-left:18px;color:var(--muted);font-size:.82rem;line-height:1.9">
-              <li>Record Suno output in <strong>Automation → Record &amp; Push</strong></li>
+              <li>Record Suno output in <strong>Suno Engine → Record &amp; Push</strong></li>
               <li>Track is created as an <code>nmc_track</code> draft on NairaMusic.com</li>
               <li>Review in WP Admin and click <strong>Publish</strong></li>
               <li>Track enters the <strong>153-track clock-sync rotation</strong> instantly</li>
@@ -343,14 +343,23 @@
           </article>
         </div>
 
+        <!-- LEADERBOARD -->
+        <article class="panel" style="margin-top:12px">
+          <div class="panel-head">
+            <div><p class="eyebrow">NMC CHARTS — LIVE</p><h2>Leaderboard · most played</h2></div>
+            <a class="button ghost small" href="https://nairamusic.com/charts/" target="_blank" rel="noopener">Open charts ↗</a>
+          </div>
+          <div id="leaderboardPanel" class="radio-playlist"><p class="radio-empty">Loading leaderboard…</p></div>
+        </article>
+
         <!-- SIGNAL//OS DRAFTS QUEUE -->
-        <article class="panel">
+        <article class="panel" style="margin-top:12px">
           <div class="panel-head">
             <div><p class="eyebrow">PENDING QUEUE</p><h2>SIGNAL//OS drafts awaiting radio</h2></div>
             <span id="pendingCount" class="status amber" style="display:none">0 PENDING</span>
           </div>
           <div class="radio-queue-list" id="radioQueue">
-            <p class="radio-empty">No drafts pending — push a track from the Automation module to queue it here.</p>
+            <p class="radio-empty">No drafts pending — push a track from the Suno Engine (Record &amp; Push) to queue it here.</p>
           </div>
         </article>
 
