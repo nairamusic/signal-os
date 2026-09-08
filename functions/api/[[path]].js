@@ -7,6 +7,9 @@
 //   WP_BASE_URL     (plain)   – e.g. https://nairamusic.com  (optional; defaults below)
 
 const DEFAULT_WP_BASE = "https://nairamusic.com";
+// Stateful Node backend (Render) for routes that aren't WP proxies (state, jobs,
+// campaigns, automation, suno). Free tier — first hit after idle cold-starts ~50s.
+const DEFAULT_RENDER_BASE = "https://signal-os-api-m72h.onrender.com";
 
 // Static path → { wp: WordPress endpoint, methods: allowed }.
 const ROUTES = {
@@ -42,12 +45,31 @@ export async function onRequest(context) {
   const base = (env.WP_BASE_URL || DEFAULT_WP_BASE).replace(/\/+$/, "");
   const key = env.NMC_SIGNAL_KEY || "";
 
+  const url = new URL(request.url);
   const route = resolve(path);
 
-  // Stateful routes (state, jobs, campaigns, assets, suno) live on the Node backend,
-  // not here — return a clear, non-breaking response instead of a hard 404.
+  // Not a WP-proxy route → forward to the stateful Node backend on Render
+  // (state/jobs/campaigns/automation/suno). Authorization header passes through.
   if (!route) {
-    return json({ error: "Not served by Cloudflare Function", path: `/api/${path}` }, 404);
+    const renderBase = (env.RENDER_API_URL || DEFAULT_RENDER_BASE).replace(/\/+$/, "");
+    const target = renderBase + "/api/" + path + (url.search || "");
+    const init = { method: request.method, headers: {} };
+    const auth = request.headers.get("authorization");
+    if (auth) init.headers["authorization"] = auth;
+    if (!["GET", "HEAD"].includes(request.method)) {
+      init.headers["content-type"] = request.headers.get("content-type") || "application/json";
+      init.body = await request.text();
+    }
+    try {
+      const r = await fetch(target, init);
+      const text = await r.text();
+      return new Response(text, {
+        status: r.status,
+        headers: { "content-type": r.headers.get("content-type") || "application/json", "cache-control": "no-store" },
+      });
+    } catch (e) {
+      return json({ error: "Automation backend unreachable", detail: String(e && (e.message || e)) }, 502);
+    }
   }
   if (!route.methods.includes(request.method)) {
     return json({ error: "Method not allowed", path: `/api/${path}` }, 405);
@@ -56,7 +78,6 @@ export async function onRequest(context) {
     return json({ dryRun: true, message: "NMC_SIGNAL_KEY not configured", submissions: [], artists: [], tracks: [], playlist: [], count: 0 });
   }
 
-  const url = new URL(request.url);
   const wpUrl = base + route.wp + (url.search || "");
 
   const init = {
