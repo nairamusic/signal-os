@@ -107,6 +107,33 @@ export async function onRequest(context) {
     return json({ radio, track_count: list.length, pending });
   }
 
+  // Automation "Record & Push" → create a DRAFT nmc_track on WordPress from the
+  // Suno output (title/artist/genre/bpm + audio URL). Reuses the track-save endpoint.
+  if (path === "publish" && request.method === "POST") {
+    if (!key) return json({ ok: true, result: null, dryRun: true, message: "NMC_SIGNAL_KEY not configured" });
+    const body = await request.json().catch(() => ({}));
+    const wpBody = {
+      title: body.title || "Untitled",
+      artist_name: body.artist || "",
+      genre: body.genre || "",
+      bpm: body.bpm || "",
+      audio_url: body.suno_url || "",
+      status: "draft",
+    };
+    try {
+      const r = await fetch(base + "/wp-json/nmcsignal/v1/track-save", {
+        method: "POST",
+        headers: { "X-Signal-Key": key, "Content-Type": "application/json" },
+        body: JSON.stringify(wpBody),
+      });
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok || !j.id) return json({ ok: false, error: "WP " + r.status }, 502);
+      return json({ ok: true, result: { id: j.id, editUrl: base + "/wp-admin/post.php?post=" + j.id + "&action=edit" } });
+    } catch (e) {
+      return json({ ok: false, error: String(e && (e.message || e)) }, 502);
+    }
+  }
+
   const url = new URL(request.url);
   const route = resolve(path);
 
