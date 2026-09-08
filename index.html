@@ -38,7 +38,7 @@
       <nav aria-label="Primary">
         <button class="nav-item active" data-view="overview"><span>01</span> Command</button>
         <button class="nav-item" data-view="catalogue"><span>02</span> Catalogue</button>
-        <button class="nav-item" data-view="suno"><span>03</span> Suno Engine</button>
+        <button class="nav-item" data-view="suno"><span>03</span> Studio</button>
         <button class="nav-item" data-view="signal"><span>04</span> Radio</button>
         <button class="nav-item" data-view="ar"><span>05</span> A&amp;R</button>
         <button class="nav-item" data-view="settings"><span>06</span> Settings</button>
@@ -284,6 +284,51 @@
               <span id="sunoRecordResult" class="suno-record-result" hidden></span>
             </div>
           </form>
+        </article>
+
+        <!-- ══ STUDIO: VISUALS (KLING) ══ -->
+        <article class="panel" id="studioVisuals" style="margin-top:24px;border-top:1px solid var(--line);padding-top:20px">
+          <div class="panel-head">
+            <div><p class="eyebrow">VISUALS — KLING</p><h2>Cover art &amp; video</h2><p style="color:var(--muted);font-size:.82rem">Prompt is seeded from the selected artist's visual DNA. Generate in Kling, paste the result URL, attach it to the track.</p></div>
+            <a class="button ghost small" href="https://app.klingai.com" target="_blank" rel="noopener noreferrer">Open Kling ↗</a>
+          </div>
+          <textarea id="klingPrompt" class="prompt-box" rows="4" placeholder="Select an artist in the launcher above to seed the visual prompt…" style="font-size:.8rem"></textarea>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"><button class="button ghost small" id="klingCopy">Copy visual prompt</button></div>
+          <div style="margin-top:14px;border-top:1px solid var(--line);padding-top:12px">
+            <p class="eyebrow" style="margin-bottom:8px">Log result</p>
+            <input id="klingResultUrl" type="url" placeholder="https://…  (Kling image or video URL)" style="width:100%;box-sizing:border-box">
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+              <button class="button ghost small" id="klingLog">Attach to artist</button>
+              <button class="button small" id="klingPushCover">Set as track cover on website</button>
+              <span id="klingState" style="align-self:center;font-size:.72rem;color:var(--muted)"></span>
+            </div>
+            <div id="klingAssets" style="margin-top:10px"></div>
+          </div>
+        </article>
+
+        <!-- ══ STUDIO: SOCIAL ══ -->
+        <article class="panel" id="studioSocial" style="margin-top:16px">
+          <div class="panel-head">
+            <div><p class="eyebrow">SOCIAL — ASSISTED</p><h2>Captions</h2><p style="color:var(--muted);font-size:.82rem">Auto-written from the track &amp; artist DNA. Copy, open the composer, post. Auto-posting needs OAuth apps — off by design.</p></div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <a class="button ghost small" href="https://studio.youtube.com" target="_blank" rel="noopener">YouTube ↗</a>
+              <a class="button ghost small" href="https://www.instagram.com" target="_blank" rel="noopener">Instagram ↗</a>
+              <a class="button ghost small" href="https://www.tiktok.com/upload" target="_blank" rel="noopener">TikTok ↗</a>
+            </div>
+          </div>
+          <div class="tabs" id="socialTabs" style="margin-bottom:8px"></div>
+          <textarea id="socialCaption" class="prompt-box" rows="5" placeholder="Select an artist/track to write a caption…" style="font-size:.82rem"></textarea>
+          <div style="display:flex;gap:8px;margin-top:10px"><button class="button ghost small" id="socialRegen">Regenerate</button><button class="button small" id="socialCopy">Copy caption</button></div>
+        </article>
+
+        <!-- ══ STUDIO: DISTRIBUTION (DISTROKID) ══ -->
+        <article class="panel" id="studioDistro" style="margin-top:16px">
+          <div class="panel-head">
+            <div><p class="eyebrow">DISTRIBUTION — DISTROKID (HANDOFF)</p><h2>Release delivery</h2><p style="color:var(--muted);font-size:.82rem">DistroKid has no public API — this exports the exact metadata and opens DistroKid for the operator to upload.</p></div>
+            <a class="button ghost small" href="https://distrokid.com/new" target="_blank" rel="noopener noreferrer">Open DistroKid ↗</a>
+          </div>
+          <div id="distroChecklist" style="font-size:.85rem"></div>
+          <div style="display:flex;gap:8px;margin-top:12px"><button class="button ghost small" id="distroExport">Export release metadata</button></div>
         </article>
       </section>
 
