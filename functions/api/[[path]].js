@@ -73,8 +73,12 @@ export async function onRequest(context) {
       try { const parsed = JSON.parse(raw || "{}"); init.body = JSON.stringify(parsed && parsed.state ? parsed : { state: parsed }); }
       catch (e) { init.body = raw; }
     }
+    init.cf = { cacheTtl: 0, cacheEverything: false };
     try {
-      const r = await fetch(base + "/wp-json/nmcsignal/v1/os-state", init);
+      // Cache-buster on reads — GoDaddy edge-caches the os-state GET, which would
+      // otherwise return a stale snapshot right after a save.
+      const wpUrl = base + "/wp-json/nmcsignal/v1/os-state" + (method === "GET" ? "?_=" + Date.now() : "");
+      const r = await fetch(wpUrl, init);
       const text = await r.text();
       return new Response(text, { status: r.ok ? 200 : r.status, headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" } });
     } catch (e) {
