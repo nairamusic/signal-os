@@ -44,6 +44,21 @@ export async function onRequest(context) {
   const base = (env.WP_BASE_URL || DEFAULT_WP_BASE).replace(/\/+$/, "");
   const key = env.NMC_SIGNAL_KEY || "";
 
+  // Synthesized health (no Node backend). WordPress connector is live (we proxy to it);
+  // Suno is manual (no external API). Shape must match what the frontend reads:
+  // health.connectors.suno / .wordpress → {configured, mode}.
+  if (path === "health") {
+    return json({
+      ok: true,
+      mode: "live",
+      storage: { configured: true, backend: "wordpress-option" },
+      connectors: {
+        wordpress: { configured: true, mode: "live" },
+        suno: { configured: false, mode: "manual" },
+      },
+    });
+  }
+
   const url = new URL(request.url);
   const route = resolve(path);
 
