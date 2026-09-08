@@ -66,7 +66,13 @@ export async function onRequest(context) {
     const method = request.method === "GET" ? "GET" : "POST";
     const init = { method, headers: { Accept: "application/json" } };
     if (key) init.headers["X-Signal-Key"] = key;
-    if (method !== "GET") { init.headers["Content-Type"] = "application/json"; init.body = await request.text(); }
+    if (method !== "GET") {
+      init.headers["Content-Type"] = "application/json";
+      const raw = await request.text();
+      // os-state stores body.state, so wrap the app's state payload accordingly.
+      try { const parsed = JSON.parse(raw || "{}"); init.body = JSON.stringify(parsed && parsed.state ? parsed : { state: parsed }); }
+      catch (e) { init.body = raw; }
+    }
     try {
       const r = await fetch(base + "/wp-json/nmcsignal/v1/os-state", init);
       const text = await r.text();
