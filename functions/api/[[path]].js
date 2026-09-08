@@ -10,8 +10,6 @@ const DEFAULT_WP_BASE = "https://nairamusic.com";
 
 // Static path → { wp: WordPress endpoint, methods: allowed }.
 const ROUTES = {
-  // Signal//OS saved state lives in a WordPress option (os-state) — no Render needed.
-  "state":                 { wp: "/wp-json/nmcsignal/v1/os-state",         methods: ["GET", "POST"] },
   "site/submissions":      { wp: "/wp-json/nmcsignal/v1/submissions",      methods: ["GET"] },
   "site/submissions-full": { wp: "/wp-json/nmcsignal/v1/submissions-full", methods: ["GET"] },
   "site/artists":          { wp: "/wp-json/nmcsignal/v1/artists",          methods: ["GET"] },
@@ -59,6 +57,23 @@ export async function onRequest(context) {
         suno: { configured: false, mode: "manual" },
       },
     });
+  }
+
+  // Signal//OS saved state <-> WordPress option (os-state). The app GETs to load and
+  // PUTs to save; os-state serves GET/POST, so map any write (PUT/POST) to a POST.
+  // Keeps state synced with the website (persisted in WP, shared across devices).
+  if (path === "state") {
+    const method = request.method === "GET" ? "GET" : "POST";
+    const init = { method, headers: { Accept: "application/json" } };
+    if (key) init.headers["X-Signal-Key"] = key;
+    if (method !== "GET") { init.headers["Content-Type"] = "application/json"; init.body = await request.text(); }
+    try {
+      const r = await fetch(base + "/wp-json/nmcsignal/v1/os-state", init);
+      const text = await r.text();
+      return new Response(text, { status: r.ok ? 200 : r.status, headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" } });
+    } catch (e) {
+      return json({ error: String(e && (e.message || e)) }, 502);
+    }
   }
 
   // Radio now-playing panel. The frontend reads d.radio.current_item / next_item /
