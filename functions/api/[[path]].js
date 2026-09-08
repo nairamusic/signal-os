@@ -16,6 +16,8 @@ const ROUTES = {
   "site/submissions-full": { wp: "/wp-json/nmcsignal/v1/submissions-full", methods: ["GET"] },
   "site/artists":          { wp: "/wp-json/nmcsignal/v1/artists",          methods: ["GET"] },
   "site/artist-push":      { wp: "/wp-json/nmcsignal/v1/artist-push",      methods: ["POST"] },
+  "site/track-save":       { wp: "/wp-json/nmcsignal/v1/track-save",       methods: ["POST"] },
+  "site/track-delete":     { wp: "/wp-json/nmcsignal/v1/track-delete",     methods: ["POST"] },
   "site/catalogue":        { wp: "/wp-json/nmcsignal/v1/catalogue",        methods: ["GET"] },
   "site/shop":             { wp: "/wp-json/nmcsignal/v1/shop-stats",       methods: ["GET"] },
   "radio/status":          { wp: "/wp-json/nmcsignal/v1/status",           methods: ["GET"] },
