@@ -95,6 +95,32 @@ export async function onRequest(context) {
     }
   }
 
+  // AI songwriter — proxies to the Anthropic API with a server-side key so the
+  // Studio can generate instrumental syntax, vocal prompts and lyrics. The key
+  // (ANTHROPIC_API_KEY) lives only in the Pages project env, never in the browser.
+  if (path === "ai/generate" && request.method === "POST") {
+    const aiKey = env.ANTHROPIC_API_KEY || "";
+    if (!aiKey) return json({ ok: false, needsKey: true, error: "AI not configured", message: "Add ANTHROPIC_API_KEY in the Pages project → Settings → Variables and Secrets, then redeploy." });
+    let body; try { body = await request.json(); } catch (e) { body = {}; }
+    const model = body.model || "claude-sonnet-5";
+    const max_tokens = Math.min(Math.max(parseInt(body.max_tokens, 10) || 1600, 128), 4000);
+    const payload = { model, max_tokens, messages: [{ role: "user", content: String(body.prompt || "") }] };
+    if (body.system) payload.system = String(body.system);
+    try {
+      const r = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: { "content-type": "application/json", "x-api-key": aiKey, "anthropic-version": "2023-06-01" },
+        body: JSON.stringify(payload),
+      });
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok) return json({ ok: false, error: (j && j.error && j.error.message) || ("Anthropic " + r.status) });
+      const text = Array.isArray(j.content) ? j.content.filter((b) => b.type === "text").map((b) => b.text).join("\n").trim() : "";
+      return json({ ok: true, text, model });
+    } catch (e) {
+      return json({ ok: false, error: String(e && (e.message || e)) });
+    }
+  }
+
   // Radio now-playing panel. The frontend reads d.radio.current_item / next_item /
   // playlist_length / current_show and d.track_count. WP's nmcsignal/v1/status only
   // returns A&R sync data, so compose the real radio state from the nmc-radio endpoints.

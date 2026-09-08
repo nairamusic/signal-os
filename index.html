@@ -264,6 +264,17 @@
             <p style="color:var(--muted);font-size:.82rem">Artist DNA is pre-loaded from the roster. Copy the prompt, open Suno, paste and fire.</p></div>
             <span class="id-chip" id="launchTrackChip">Select a track</span>
           </div>
+          <article class="panel" id="aiStudio" style="margin:0 0 16px;border:1px solid #4a3f1e">
+            <div class="panel-head"><div><p class="eyebrow">✨ AI SONGWRITER — CLAUDE</p><h2>Generate the song with AI</h2><p style="color:var(--muted);font-size:.82rem">Uses the artist selected above. Give a one-line brief; Claude writes the instrumental syntax, vocal prompt and lyrics to fit the artist's DNA — straight into the fields below.</p></div><span id="aiState" style="font-size:.72rem;color:var(--muted);text-align:right;max-width:220px"></span></div>
+            <label style="display:block;font-size:.78rem;color:var(--muted);margin-bottom:10px">Song brief / concept<input id="aiConcept" placeholder="e.g. a defiant late-night club anthem about leaving the ends" style="width:100%;margin-top:4px;padding:9px 11px;background:#0b0a07;border:1px solid #3a3320;border-radius:6px;color:#f0e6cf;box-sizing:border-box"></label>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+              <button type="button" class="button small" id="aiGenAll">✨ Generate all</button>
+              <button type="button" class="button ghost small" id="aiGenInstrumental">Instrumental</button>
+              <button type="button" class="button ghost small" id="aiGenVocal">Vocal prompt</button>
+              <button type="button" class="button ghost small" id="aiGenLyrics">Lyrics</button>
+              <label style="font-size:.75rem;color:var(--muted);display:flex;align-items:center;gap:5px;margin-left:auto"><input type="checkbox" id="aiExplicit" checked> Explicit</label>
+            </div>
+          </article>
           <div class="grid two" style="gap:16px;margin-top:0">
             <article class="panel">
               <div class="panel-head"><div><p class="eyebrow">ARTIST DNA PROMPT</p><h2 id="launchArtistName">—</h2></div>
