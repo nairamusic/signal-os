@@ -244,19 +244,7 @@
 
       <section class="view" id="suno" data-title="Suno Engine">
         <div class="section-intro"><div><p class="eyebrow">S3 — STUDIO</p><h1>Create a new song.</h1><p>Pick an artist, build the instrumental, lyrics and vocal, generate in Suno, then save the finished song straight to the catalogue.</p></div><span class="id-chip" id="sunoGenerationId">NEW SONG</span></div>
-        <div class="grid two prompt-layout">
-          <article class="panel">
-            <div class="tabs"><button class="tab active" data-prompt="styles">Styles</button><button class="tab" data-prompt="instrumental">Instrumental</button><button class="tab" data-prompt="exclude">Exclusions</button></div>
-            <textarea class="prompt-box" id="stylesPrompt" aria-label="Suno styles prompt">Afrobeat × UK street drill, raw explicit cinematic street soul, 142 BPM, D minor. Male melodic rap-sing hybrid with controlled East London cadence, dark warm mid-range voice, sudden half-sung transitions and a commanding sung hook with light Auto-Tune. Three core instruments: sliding log-drum/808, sinister dark piano and ceremonial ogene. Dry narrow verses, rising pre-hook, enormous chorus, exposed bridge and explosive final hook. Menacing, ancestral and triumphant; polished UK master with clean sub-bass and clear vocal.</textarea>
-            <textarea class="prompt-box hidden" id="instrumentalPrompt" aria-label="Suno instrumental prompt">Instrumental only. Controlled menace into ancestral dominance at 142 BPM in D minor. Sparse two-note piano intro. Dry log-drum/808 verse with hard silence between impacts. Filtered rising pre-hook. Wide hook with dark piano chords, melodic sub movement and two ogene strikes. Bridge strips to an 808 heartbeat. Complete beat cut before the final hook. Final hook returns like a coronation with three ogene strikes. No vocals.</textarea>
-            <textarea class="prompt-box hidden" id="excludePrompt" aria-label="Suno exclusions prompt">happy Afropop, EDM, house, techno, bright synths, major key, rock guitar, orchestral strings, gospel choir, comedy, lo-fi, muddy bass, distorted master, uncontrolled shouting</textarea>
-            <div class="prompt-foot"><span><b id="charCount">0</b> characters</span><button class="button" id="copyPrompt">Copy prompt</button></div>
-          </article>
-          <article class="panel">
-            <div class="panel-head"><div><p class="eyebrow">GENERATION LEDGER</p><h2>Controlled variants</h2></div><button class="button small" id="addGeneration">+ Log</button></div>
-            <div id="generationList" class="generation-list"></div>
-          </article>
-        </div>
+
 
         <div class="api-generate-panel" id="sunoLaunchPanel">
           <div class="section-intro" style="margin-top:24px;border-top:1px solid var(--line);padding-top:20px">
@@ -274,6 +262,14 @@
               <button type="button" class="button ghost small" id="aiGenLyrics">Lyrics</button>
               <label style="font-size:.75rem;color:var(--muted);display:flex;align-items:center;gap:5px;margin-left:auto"><input type="checkbox" id="aiExplicit" checked> Explicit</label>
             </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:12px;border-top:1px solid var(--line);padding-top:12px">
+              <span style="font-size:.72rem;color:#c9b98f;letter-spacing:.05em">COPY FOR SUNO →</span>
+              <button type="button" class="button ghost small" id="aiCopyStyle">Style box</button>
+              <button type="button" class="button ghost small" id="aiCopyArrangement">Instrumental arrangement</button>
+              <button type="button" class="button ghost small" id="aiCopyExclude">Exclude list</button>
+              <button type="button" class="button ghost small" id="aiCopyLyrics">Lyrics box</button>
+            </div>
+            <p style="font-size:.72rem;color:var(--muted);margin:8px 0 0">For a full instrumental: Suno → turn <b>Instrumental</b> ON → paste <b>Style box</b> into styles, <b>Instrumental arrangement</b> into the lyrics box, <b>Exclude list</b> into exclude-styles.</p>
           </article>
           <div class="grid two" style="gap:16px;margin-top:0">
             <article class="panel">
