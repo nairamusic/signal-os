@@ -7,12 +7,11 @@
 //   WP_BASE_URL     (plain)   – e.g. https://nairamusic.com  (optional; defaults below)
 
 const DEFAULT_WP_BASE = "https://nairamusic.com";
-// Stateful Node backend (Render) for routes that aren't WP proxies (state, jobs,
-// campaigns, automation, suno). Free tier — first hit after idle cold-starts ~50s.
-const DEFAULT_RENDER_BASE = "https://signal-os-api-m72h.onrender.com";
 
 // Static path → { wp: WordPress endpoint, methods: allowed }.
 const ROUTES = {
+  // Signal//OS saved state lives in a WordPress option (os-state) — no Render needed.
+  "state":                 { wp: "/wp-json/nmcsignal/v1/os-state",         methods: ["GET", "POST"] },
   "site/submissions":      { wp: "/wp-json/nmcsignal/v1/submissions",      methods: ["GET"] },
   "site/submissions-full": { wp: "/wp-json/nmcsignal/v1/submissions-full", methods: ["GET"] },
   "site/artists":          { wp: "/wp-json/nmcsignal/v1/artists",          methods: ["GET"] },
@@ -48,28 +47,11 @@ export async function onRequest(context) {
   const url = new URL(request.url);
   const route = resolve(path);
 
-  // Not a WP-proxy route → forward to the stateful Node backend on Render
-  // (state/jobs/campaigns/automation/suno). Authorization header passes through.
+  // Not a WP-proxy route. There is NO Render/Node backend — Signal//OS runs entirely
+  // on Cloudflare. Return a graceful, non-throwing stub so client-only/manual modules
+  // (jobs, assets, campaigns, Suno prompt-builder) degrade to "empty" instead of erroring.
   if (!route) {
-    const renderBase = (env.RENDER_API_URL || DEFAULT_RENDER_BASE).replace(/\/+$/, "");
-    const target = renderBase + "/api/" + path + (url.search || "");
-    const init = { method: request.method, headers: {} };
-    const auth = request.headers.get("authorization");
-    if (auth) init.headers["authorization"] = auth;
-    if (!["GET", "HEAD"].includes(request.method)) {
-      init.headers["content-type"] = request.headers.get("content-type") || "application/json";
-      init.body = await request.text();
-    }
-    try {
-      const r = await fetch(target, init);
-      const text = await r.text();
-      return new Response(text, {
-        status: r.status,
-        headers: { "content-type": r.headers.get("content-type") || "application/json", "cache-control": "no-store" },
-      });
-    } catch (e) {
-      return json({ error: "Automation backend unreachable", detail: String(e && (e.message || e)) }, 502);
-    }
+    return json({ ok: true, stub: true, note: "Served by Cloudflare (stateless); no backend for this route", jobs: [], assets: [], items: [], count: 0 });
   }
   if (!route.methods.includes(request.method)) {
     return json({ error: "Method not allowed", path: `/api/${path}` }, 405);
