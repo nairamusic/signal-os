@@ -233,3 +233,5 @@ export async function onRequest(context) {
     return json({ error: String(e && e.message || e) }, 502);
   }
 }
+
+// redeploy: activate ANTHROPIC_API_KEY secret
