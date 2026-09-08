@@ -38,24 +38,10 @@
       <nav aria-label="Primary">
         <button class="nav-item active" data-view="overview"><span>01</span> Command</button>
         <button class="nav-item" data-view="catalogue"><span>02</span> Catalogue</button>
-        <button class="nav-item" data-view="artists"><span>03</span> Artist Bible</button>
-        <button class="nav-item" data-view="track"><span>04</span> Track DNA</button>
-        <button class="nav-item" data-view="suno"><span>05</span> Suno Engine</button>
-        <button class="nav-item" data-view="qc"><span>06</span> Black Signal QC</button>
-        <button class="nav-item" data-view="rights"><span>07</span> Rights Ledger</button>
-        <button class="nav-item" data-view="pipeline"><span>08</span> Release Pipeline</button>
-        <button class="nav-item" data-view="signal"><span>09</span> NMC Signal</button>
-        <button class="nav-item" data-view="automation"><span>10</span> Automation</button>
-        <button class="nav-item" data-view="campaigns"><span>11</span> Distribution</button>
-        <button class="nav-item" data-view="insights"><span>12</span> Insights</button>
-        <button class="nav-item" data-view="governance"><span>13</span> Governance</button>
-        <button class="nav-item" data-view="assets"><span>14</span> Asset Vault</button>
-        <button class="nav-item" data-view="splits"><span>15</span> Splits</button>
-        <button class="nav-item" data-view="metadata"><span>16</span> Metadata</button>
-        <button class="nav-item" data-view="integrations"><span>17</span> Integrations</button>
-        <button class="nav-item" data-view="preflight"><span>18</span> Preflight</button>
-        <button class="nav-item" data-view="manual"><span>19</span> Manual</button>
-        <button class="nav-item" data-view="settings"><span>20</span> Settings</button>
+        <button class="nav-item" data-view="suno"><span>03</span> Suno Engine</button>
+        <button class="nav-item" data-view="signal"><span>04</span> Radio</button>
+        <button class="nav-item" data-view="ar"><span>05</span> A&amp;R</button>
+        <button class="nav-item" data-view="settings"><span>06</span> Settings</button>
       </nav>
       <div class="sidebar-foot">
         <span class="signal-dot"></span>
@@ -72,7 +58,6 @@
           <label class="track-context"><span>Current track</span><select id="currentTrack"></select></label>
           <span class="date" id="today"></span>
           <button class="button ghost" id="exportButton">Export data</button>
-          <button class="notification-button" id="notificationButton" aria-label="Open notifications">◇<span id="notificationCount">0</span></button>
           <span class="avatar" title="NMC Admin" aria-label="Signed in as NMC Admin">N</span>
         </div>
       </header>
@@ -97,22 +82,9 @@
           <article><small>Black Signal</small><strong id="blackMetric">1</strong><em>95+ quality score</em></article>
           <article><small>Rights complete</small><strong id="rightsMetric">50%</strong><em>Release blockers visible</em></article>
         </div>
-        <!-- NAIRAMUSIC.COM LIVE SYNC PANEL -->
-        <article class="panel" style="margin-bottom:12px">
-          <div class="panel-head">
-            <div><p class="eyebrow">NAIRAMUSIC.COM — LIVE SITE</p><h2>Tracks · Shop · Submissions · Artists</h2></div>
-            <div style="display:flex;gap:8px">
-              <button class="button ghost small" id="syncArtistsBtn">↓ Sync Artists</button>
-              <button class="button ghost small" id="refreshSitePanel">↻ Refresh</button>
-              <a class="button ghost small" href="https://nairamusic.com/wp-admin/" target="_blank" rel="noopener">WP Admin ↗</a>
-            </div>
-          </div>
-          <div id="siteSyncPanel"><p class="muted-note" style="color:var(--muted);font-size:.82rem;padding:8px 0">Loading site data…</p></div>
-        </article>
-
         <div class="grid two">
           <article class="panel">
-            <div class="panel-head"><div><p class="eyebrow">LIVE PIPELINE</p><h2>Work requiring attention</h2></div><button class="text-button" data-jump="pipeline">View pipeline →</button></div>
+            <div class="panel-head"><div><p class="eyebrow">LIVE CATALOGUE</p><h2>Work requiring attention</h2></div><button class="text-button" data-jump="catalogue">View catalogue →</button></div>
             <div id="attentionList" class="attention-list"></div>
           </article>
           <article class="panel manifesto">
@@ -123,6 +95,17 @@
             <div class="rule"><span>03</span><p><b>Quality before volume</b><br>Black Signal is earned through measurable gates.</p></div>
           </article>
         </div>
+      </section>
+
+      <section class="view" id="ar" data-title="A&amp;R — Submissions">
+        <div class="section-intro"><div><p class="eyebrow">NAIRAMUSIC.COM — LIVE SITE</p><h1>A&amp;R</h1><p>Submissions, catalogue, shop and artists synced live from nairamusic.com.</p></div>
+          <div style="display:flex;gap:8px">
+            <button class="button ghost small" id="syncArtistsBtn">↓ Sync Artists</button>
+            <button class="button ghost small" id="refreshSitePanel">↻ Refresh</button>
+            <a class="button ghost small" href="https://nairamusic.com/wp-admin/" target="_blank" rel="noopener">WP Admin ↗</a>
+          </div>
+        </div>
+        <article class="panel"><div id="siteSyncPanel"><p class="muted-note" style="color:var(--muted);font-size:.82rem;padding:8px 0">Loading site data…</p></div></article>
       </section>
 
       <section class="view" id="catalogue" data-title="Catalogue Command Centre">
@@ -284,32 +267,28 @@
             </article>
           </div>
         </div>
+
+        <article class="panel" id="sunoRecordPanel" style="margin-top:16px">
+          <div class="panel-head">
+            <div><p class="eyebrow">SUNO OUTPUT</p><h2>Record generation result</h2></div>
+            <span class="status amber" id="sunoRecordState">AWAITING INPUT</span>
+          </div>
+          <p class="suno-record-note">Generate in <a href="https://suno.com" target="_blank" rel="noopener noreferrer">suno.com</a> using the prompts above, then paste the result here. A draft is created on NairaMusic.com immediately.</p>
+          <form class="form-grid" id="sunoRecordForm">
+            <label>Suno song page URL<input name="suno_page" type="url" placeholder="https://suno.com/song/…"></label>
+            <label>Direct audio URL (.mp3)<input name="suno_audio" type="url" placeholder="https://cdn1.suno.ai/…"></label>
+            <label>Generation code<input name="gen_code" placeholder="G01-A" value="G01-A"></label>
+            <label>Notes<input name="notes" placeholder="Canon take · hook lands at 0:24"></label>
+            <div class="suno-record-actions">
+              <button type="submit" class="button" id="recordSunoBtn">Record &amp; Push to NairaMusic.com →</button>
+              <span id="sunoRecordResult" class="suno-record-result" hidden></span>
+            </div>
+          </form>
+        </article>
       </section>
 
-      <section class="view" id="qc" data-title="Black Signal QC">
-        <div class="section-intro"><div><p class="eyebrow">S4 — QUALITY CONTROL</p><h1>12/10 is measured.</h1><p>A release class is calculated from weighted creative and operational gates.</p></div><div class="grade" id="gradeBadge"><strong>94</strong><span>GOLD SIGNAL</span></div></div>
-        <div class="grid qc-grid">
-          <article class="panel" id="scoreControls"></article>
-          <article class="panel score-summary">
-            <div class="ring" id="scoreRing"><span id="totalScore">94</span><small>/100</small></div>
-            <h2 id="gradeTitle">GOLD SIGNAL</h2>
-            <p id="gradeText">Official-single quality. Resolve remaining weaknesses before flagship classification.</p>
-            <div class="gate-list" id="gateList"></div>
-            <button class="button full" id="saveScore">Save QC decision</button>
-          </article>
-        </div>
-      </section>
 
-      <section class="view" id="rights" data-title="Rights Ledger">
-        <div class="section-intro"><div><p class="eyebrow">S5 — PROVENANCE</p><h1>Evidence travels with the master.</h1><p>Commercial release remains blocked until required records are complete.</p></div><button class="button" id="markRights">Mark required complete</button></div>
-        <article class="panel ledger" id="rightsLedger"></article>
-      </section>
 
-      <section class="view" id="pipeline" data-title="Release Pipeline">
-        <div class="section-intro"><div><p class="eyebrow">S6 — RELEASE CONTROL</p><h1>Signal chain</h1><p>Move work forward only when the preceding gate has evidence.</p></div><button class="button" id="newTrack">+ New track</button></div>
-        <div class="kanban" id="kanban"></div>
-      <div class="scheduler-panel" id="schedulerPanel"><div class="section-intro" style="margin-top:28px;border-top:1px solid var(--line);padding-top:20px"><div><p class="eyebrow">RELEASE SCHEDULER</p><h2>Bulk release dates</h2><p style="color:var(--muted);font-size:.82rem">Set and stagger every NMC track release date in one place. Dates save to each track's metadata.</p></div><div class="scheduler-controls"><label class="scheduler-label">From<input type="date" id="staggerStart"></label><label class="scheduler-label">Gap<select id="staggerGap"><option value="7">Weekly</option><option value="14" selected>Every 2 weeks</option><option value="21">Every 3 weeks</option><option value="28">Monthly</option></select></label><button class="button ghost small" id="staggerApply">Auto-stagger ↓</button><button class="button" id="saveAllDates">Save all dates</button></div></div><div id="schedulerList"></div></div>
-      </section>
 
       <section class="view" id="signal" data-title="NMC Signal Radio">
         <div class="section-intro">
@@ -409,106 +388,15 @@
         </article>
       </section>
 
-      <section class="view" id="automation" data-title="Automation Control">
-        <div class="section-intro"><div><p class="eyebrow">S8 — CONNECTORS</p><h1>Automation</h1><p>Generate through Suno, capture provenance, create a NairaMusic.com draft and return the result to the release pipeline.</p></div><button class="button" id="runAutomation">Run selected track</button></div>
-        <div class="connector-grid">
-          <article class="panel connector" id="sunoConnector"><span class="connector-icon">S</span><div><p class="eyebrow">GENERATION</p><h2>Suno Platform</h2><small>Checking connector…</small></div><b class="connector-state">—</b></article>
-          <article class="panel connector" id="wpConnector"><span class="connector-icon">W</span><div><p class="eyebrow">PUBLISHING</p><h2>NairaMusic.com</h2><small>Checking connector…</small></div><b class="connector-state">—</b></article>
-        </div>
-        <article class="panel automation-flow"><span>TRACK DNA</span><i>→</i><span>SUNO JOB</span><i>→</i><span>QC HOLD</span><i>→</i><span>WORDPRESS DRAFT</span><i>→</i><span>NMC SIGNAL</span></article>
-        <article class="panel">
-          <div class="panel-head"><div><p class="eyebrow">AUTOMATION JOBS</p><h2>Generation and publishing queue</h2></div><button class="button ghost small" id="refreshJobs">Refresh</button></div>
-          <div class="job-list" id="jobList"><p class="empty-state">No automation jobs yet.</p></div>
-        </article>
 
-        <article class="panel" id="sunoRecordPanel">
-          <div class="panel-head">
-            <div><p class="eyebrow">SUNO OUTPUT</p><h2>Record generation result</h2></div>
-            <span class="status amber" id="sunoRecordState">AWAITING INPUT</span>
-          </div>
-          <p class="suno-record-note">Generate in <a href="https://suno.com" target="_blank" rel="noopener noreferrer">suno.com</a> using the prompts from the Suno Engine module, then paste the result here. The track advances to QC Hold and a draft is created on NairaMusic.com immediately.</p>
-          <form class="form-grid" id="sunoRecordForm">
-            <label>Suno song page URL<input name="suno_page" type="url" placeholder="https://suno.com/song/…"></label>
-            <label>Direct audio URL (.mp3)<input name="suno_audio" type="url" placeholder="https://cdn1.suno.ai/…"></label>
-            <label>Generation code<input name="gen_code" placeholder="G01-A" value="G01-A"></label>
-            <label>Notes<input name="notes" placeholder="Canon take · hook lands at 0:24"></label>
-            <div class="suno-record-actions">
-              <button type="submit" class="button" id="recordSunoBtn">Record &amp; Push to NairaMusic.com →</button>
-              <span id="sunoRecordResult" class="suno-record-result" hidden></span>
-            </div>
-          </form>
-        </article>
-      </section>
 
-      <section class="view" id="campaigns" data-title="Distribution & Social">
-        <div class="section-intro"><div><p class="eyebrow">S9 — RELEASE AMPLIFICATION</p><h1>One master. Every signal.</h1><p>Package the selected NMC track for streaming delivery, music video, short-form discovery and Naira Music channels.</p></div><button class="button" id="buildCampaign">Build release campaign</button></div>
-        <article class="panel campaign-summary"><div><p class="eyebrow">SELECTED RELEASE</p><h2 id="campaignTitle">—</h2><small id="campaignArtist">—</small></div><div class="campaign-meter"><strong id="campaignReady">0/0</strong><span>channels ready</span></div></article>
-        <div class="route-legend"><span><i class="route direct"></i>Direct API</span><span><i class="route distributor"></i>Via DistroKid</span><span><i class="route owned"></i>Owned channel</span><span><i class="route handoff"></i>Approval / handoff</span></div>
-        <div class="platform-grid" id="platformGrid"></div>
-        <article class="panel connection-centre"><div class="panel-head"><div><p class="eyebrow">ACCOUNT CONNECTIONS</p><h2>Publishing authority</h2></div><button class="button ghost small" id="refreshConnections">Check connections</button></div><div class="connection-list" id="connectionList"></div></article>
-        <article class="panel release-assets"><div class="panel-head"><div><p class="eyebrow">RELEASE PACKAGE</p><h2>Required assets and approvals</h2></div><button class="button ghost small" id="markAssets">Mark assets prepared</button></div><div class="asset-checklist" id="assetChecklist"></div></article>
-        <article class="panel content-studio"><div class="panel-head"><div><p class="eyebrow">CAMPAIGN COPY</p><h2>Platform content studio</h2></div><button class="button ghost small" id="generateCopy">Generate campaign copy</button></div><div class="copy-tabs" id="copyTabs"></div><textarea id="campaignCopy" aria-label="Approved platform campaign caption" maxlength="2200" placeholder="Generate or write the approved platform caption..."></textarea><div class="copy-foot"><small id="copyCount">0 / 2200</small><button class="button ghost small" id="copyCampaignText">Copy text</button></div></article>
-        <article class="panel approval-panel"><div class="panel-head"><div><p class="eyebrow">HUMAN APPROVAL</p><h2>Final release authority</h2></div><span class="status amber" id="approvalState">BLOCKED</span></div><div class="approval-grid" id="approvalGrid"></div></article>
-        <article class="panel campaign-schedule"><div class="panel-head"><div><p class="eyebrow">CAMPAIGN CONTROL</p><h2>Schedule and dispatch</h2></div><button class="button" id="queueCampaign">Queue approved release</button></div><div class="schedule-grid"><label>Release date<input type="date" id="releaseDate"></label><label>Release time<input type="time" id="releaseTime" value="09:00"></label><label>Timezone<select id="releaseTimezone"><option>Europe/London</option><option>Africa/Lagos</option><option>UTC</option></select></label><label>Launch mode<select id="launchMode"><option value="staged">Staged rollout</option><option value="simultaneous">Simultaneous launch</option></select></label></div></article>
-        <article class="panel"><div class="panel-head"><div><p class="eyebrow">DELIVERY QUEUE</p><h2>Platform jobs</h2></div><button class="button ghost small" id="refreshCampaignJobs">Refresh</button></div><div class="delivery-list" id="campaignJobList"><p class="empty-state">No campaign jobs yet.</p></div></article>
-        <article class="panel distribution-flow"><span>BLACK SIGNAL QC</span><i>→</i><span>RIGHTS CLEAR</span><i>→</i><span>DISTROKID / DSPs</span><i>→</i><span>YOUTUBE + SOCIAL</span><i>→</i><span>NMC SIGNAL</span></article>
-      </section>
 
-      <section class="view" id="insights" data-title="Campaign Insights">
-        <div class="section-intro"><div><p class="eyebrow">S10 — SIGNAL INTELLIGENCE</p><h1>Measure the movement.</h1><p>Track release readiness, campaign links and audience response across Naira Music channels.</p></div><button class="button" id="createSmartLink">Create smart link</button></div>
-        <div class="insight-metrics"><article><small>Scheduled releases</small><strong id="scheduledMetric">0</strong><em>Across the current campaign queue</em></article><article><small>Connected channels</small><strong id="connectedMetric">0</strong><em>Publishing authority confirmed</em></article><article><small>Smart-link clicks</small><strong id="clickMetric">0</strong><em>Awaiting live analytics</em></article><article><small>Conversion rate</small><strong id="conversionMetric">—</strong><em>Clicks converting to streams</em></article></div>
-        <div class="insight-layout"><article class="panel"><div class="panel-head"><div><p class="eyebrow">RELEASE CALENDAR</p><h2>Upcoming signals</h2></div><span class="status" id="calendarMonth">—</span></div><div class="release-calendar" id="releaseCalendar"></div></article><article class="panel"><div class="panel-head"><div><p class="eyebrow">SMART LINK</p><h2>One destination</h2></div></div><div id="smartLinkPanel" class="smart-link-empty">Select a track and create its campaign destination.</div></article></div>
-        <article class="panel"><div class="panel-head"><div><p class="eyebrow">CHANNEL PERFORMANCE</p><h2>Audience signal</h2></div><button class="button ghost small" id="refreshInsights">Refresh data</button></div><div class="performance-table" id="performanceTable"></div></article>
-      </section>
 
-      <section class="view" id="governance" data-title="Label Governance">
-        <div class="section-intro"><div><p class="eyebrow">S11 — LABEL CONTROL</p><h1>Authority before access.</h1><p>Protect Naira Music canon, releases and publishing credentials as the NMC roster grows.</p></div><button class="button" id="exportAudit">Export audit</button></div>
-        <div class="identity-map"><article class="panel identity-node label"><small>LABEL</small><strong>Naira Music</strong><span>Ownership · strategy · final authority</span></article><i>→</i><article class="panel identity-node collective"><small>ARTIST COLLECTIVE</small><strong>NMC</strong><span>Naira Music Cartel · roster and culture</span></article><i>→</i><article class="panel identity-node radio"><small>BROADCAST</small><strong>NMC Signal</strong><span>Radio · rotation · audience channel</span></article></div>
-        <div class="governance-layout"><article class="panel"><div class="panel-head"><div><p class="eyebrow">ROLE MATRIX</p><h2>Team permissions</h2></div><button class="button ghost small" id="addTeamRole">Add role</button></div><div class="role-list" id="roleList"></div></article><article class="panel"><div class="panel-head"><div><p class="eyebrow">SYSTEM READINESS</p><h2>Operational controls</h2></div><button class="button ghost small" id="refreshGovernance">Run checks</button></div><div class="readiness-list" id="readinessList"></div></article></div>
-        <article class="panel custody-panel"><div class="panel-head"><div><p class="eyebrow">DATA CUSTODY</p><h2>Persistence and recovery</h2></div><div class="custody-actions"><button class="button ghost small" id="syncNow">Save snapshot</button><button class="button ghost small" id="downloadBackup">Download backup</button></div></div><div class="custody-grid"><div><small>SERVER STORAGE</small><strong id="storageState">CHECKING</strong><span>Automatic workspace snapshot</span></div><div><small>LAST SAVED</small><strong id="lastSaved">—</strong><span>Browser and server synchronised</span></div><div><small>RECORDS</small><strong id="recordCount">—</strong><span>Artists, tracks and audit events</span></div></div></article>
-        <article class="panel"><div class="panel-head"><div><p class="eyebrow">IMMUTABLE INTENT</p><h2>Audit trail</h2></div><span class="status" id="auditCount">0 EVENTS</span></div><div class="audit-list" id="auditList"></div></article>
-      </section>
 
-      <section class="view" id="assets" data-title="Media Asset Vault">
-        <div class="section-intro"><div><p class="eyebrow">S12 — MASTER CUSTODY</p><h1>Every file. Verified.</h1><p>Store release masters, artwork and campaign video against the selected NMC track with integrity hashes.</p></div><button class="button" id="chooseAsset">Upload asset</button><input type="file" id="assetInput" aria-label="Choose release asset" hidden accept="audio/*,video/*,image/*,.wav,.flac,.mp3,.mp4,.mov,.png,.jpg,.jpeg,.webp"></div>
-        <div class="vault-metrics"><article><small>Stored assets</small><strong id="assetMetric">0</strong><em>Protected workspace files</em></article><article><small>Total storage</small><strong id="storageMetric">0 MB</strong><em>Across all NMC releases</em></article><article><small>Selected track</small><strong id="trackAssetMetric">0</strong><em>Assets attached to this release</em></article><article><small>Integrity</small><strong id="integrityMetric">—</strong><em>SHA-256 verification</em></article></div>
-        <article class="panel upload-panel"><div class="upload-zone" id="uploadZone"><span>＋</span><b>Drop master, artwork or video here</b><small>WAV, FLAC, MP3, MP4, MOV, PNG, JPG or WebP · maximum 250 MB</small></div><div class="upload-progress hidden" id="uploadProgress"><div><span id="uploadName">Uploading…</span><b id="uploadPercent">0%</b></div><progress id="uploadBar" max="100" value="0"></progress></div></article>
-        <article class="panel"><div class="panel-head"><div><p class="eyebrow">ASSET REGISTER</p><h2>Release files</h2></div><button class="button ghost small" id="refreshAssets">Refresh vault</button></div><div class="asset-table" id="assetTable"><p class="empty-state">No assets uploaded yet.</p></div></article>
-      </section>
 
-      <section class="view" id="splits" data-title="Splits & Royalties">
-        <div class="section-intro"><div><p class="eyebrow">S13 — ROYALTY CONTROL</p><h1>Every point accounted for.</h1><p>Define master and publishing participants without allowing an incomplete split sheet into distribution.</p></div><button class="button" id="addParticipant">Add participant</button></div>
-        <div class="split-metrics"><article><small>Master allocation</small><strong id="masterTotal">0%</strong><em>Must equal exactly 100%</em></article><article><small>Publishing allocation</small><strong id="publishingTotal">0%</strong><em>Must equal exactly 100%</em></article><article><small>Participants</small><strong id="participantMetric">0</strong><em>Unique rights holders</em></article><article><small>Split status</small><strong id="splitStatus">BLOCKED</strong><em>Distribution accounting gate</em></article></div>
-        <div class="split-layout"><article class="panel"><div class="panel-head"><div><p class="eyebrow">MASTER</p><h2>Sound-recording ownership</h2></div><span class="status amber" id="masterState">INCOMPLETE</span></div><div class="split-list" id="masterSplitList"></div></article><article class="panel"><div class="panel-head"><div><p class="eyebrow">PUBLISHING</p><h2>Composition ownership</h2></div><span class="status amber" id="publishingState">INCOMPLETE</span></div><div class="split-list" id="publishingSplitList"></div></article></div>
-        <article class="panel royalty-readiness"><div class="panel-head"><div><p class="eyebrow">ACCOUNTING READINESS</p><h2>Royalty metadata</h2></div><button class="button ghost small" id="lockSplits">Lock split sheet</button></div><div class="royalty-fields"><label>ISRC<input id="splitIsrc" placeholder="Assigned after distributor delivery"></label><label>UPC / EAN<input id="splitUpc" placeholder="Release identifier"></label><label>PRO / Society<input id="splitPro" placeholder="PRS, ASCAP, BMI…"></label><label>Accounting currency<select id="splitCurrency"><option>GBP</option><option>NGN</option><option>USD</option><option>EUR</option></select></label></div></article>
-      </section>
 
-      <section class="view" id="metadata" data-title="Release Metadata">
-        <div class="section-intro"><div><p class="eyebrow">S14 — DSP DELIVERY</p><h1>Metadata is part of the master.</h1><p>Lock the exact release information that DistroKid, streaming services and NairaMusic.com must receive.</p></div><button class="button" id="validateMetadata">Validate metadata</button></div>
-        <div class="metadata-score"><div class="metadata-ring" id="metadataRing"><strong id="metadataPercent">0%</strong></div><div><p class="eyebrow">DELIVERY READINESS</p><h2 id="metadataGrade">INCOMPLETE</h2><p id="metadataMessage">Required distributor fields are missing.</p></div><span class="status amber" id="metadataState">BLOCKED</span></div>
-        <form class="panel metadata-form" id="metadataForm"><div class="metadata-section"><div><p class="eyebrow">RELEASE IDENTITY</p><h2>Exact public naming</h2></div><div class="metadata-grid"><label>Track title *<input name="title" required></label><label>Primary artist *<input name="artist" required></label><label>Version<input name="version" placeholder="Original, Radio Edit, Remix…"></label><label>Release type *<select name="releaseType" required><option value="Single">Single</option><option value="EP">EP</option><option value="Album">Album</option></select></label></div></div><div class="metadata-section"><div><p class="eyebrow">CLASSIFICATION</p><h2>Store placement</h2></div><div class="metadata-grid"><label>Primary genre *<select name="genre" required><option value="">Select genre</option><option>Afrobeats</option><option>Afro-Grime</option><option>Afro-Drill</option><option>Afro-Soul</option><option>Afro-Rap</option><option>Afro-Electronic</option><option>Afro-Reggae</option><option>Fuji Rap</option><option>Hip-Hop/Rap</option><option>R&amp;B/Soul</option><option>Pop</option><option>Electronic</option><option>World</option></select></label><label>Secondary genre<select name="secondaryGenre"><option value="">None</option><option>UK Street Drill</option><option>UK Rap</option><option>Afrobeats</option><option>Afropop</option><option>Afro-Grime</option><option>Afro-Drill</option><option>Afro-Soul</option><option>Afro-Rap</option><option>Afro-Electronic</option><option>Afro-Reggae</option><option>Fuji Rap</option><option>Conscious Rap</option><option>Alternative R&amp;B</option><option>Capoeira Angola / Soul</option><option>World Music</option><option>Hip-Hop/Rap</option><option>R&amp;B/Soul</option><option>Pop</option><option>World</option></select></label><label>Language *<select name="language" required><option value="">Select language</option><option>English</option><option>Yoruba</option><option>Igbo</option><option>French</option><option>Portuguese</option><option>English / Igbo</option><option>English / Yoruba</option><option>Yoruba / English</option><option>English / Yoruba / Spanish</option><option>Portuguese / English</option><option>French / Lingala / English</option><option>English / Haitian Creole</option><option>Yoruba / Edo / English</option><option>English / Pan-African</option><option>Instrumental</option></select></label><label>Explicit status *<select name="explicit" required><option>Explicit</option><option>Clean</option><option>Not Explicit</option></select></label></div></div><div class="metadata-section"><div><p class="eyebrow">OWNERSHIP &amp; CREDITS</p><h2>Commercial attribution</h2></div><div class="metadata-grid"><label>℗ Sound recording *<input name="pLine" required placeholder="2026 Naira Music"></label><label>© Copyright *<input name="cLine" required placeholder="2026 Naira Music"></label><label>Songwriter(s) *<input name="songwriters" required placeholder="Full legal names"></label><label>Producer(s) *<input name="producers" required placeholder="Full legal names"></label></div></div><div class="metadata-section"><div><p class="eyebrow">DELIVERY</p><h2>Release controls</h2></div><div class="metadata-grid"><label>Original release date *<input type="date" name="releaseDate" required></label><label>Territories *<select name="territories" required><option value="Worldwide">Worldwide</option><option value="Selected">Selected territories</option></select></label><label>Label name *<input name="label" required value="Naira Music"></label><label>Catalogue number<input name="catalogue" placeholder="NMC-ARTIST-001"></label></div></div><div class="form-actions"><span id="metadataSaved">Not validated</span><button class="button" type="submit">Lock release metadata</button></div></form>
-      </section>
 
-      <section class="view" id="integrations" data-title="Integrations Console">
-        <div class="section-intro"><div><p class="eyebrow">S15 — SECURE CONNECTIONS</p><h1>Know what can act.</h1><p>One verified view of every external service, required authority and current operating mode.</p></div><div class="integration-actions"><button class="button ghost" id="downloadIntegrationTemplate">Download checklist</button><button class="button" id="checkAllIntegrations">Check all connections</button></div></div>
-        <div class="integration-summary"><article><small>Connected</small><strong id="integrationLive">0</strong><em>Can perform authorised actions</em></article><article><small>Ready</small><strong id="integrationDry">0</strong><em>Waiting only for credentials</em></article><article><small>Handoff</small><strong id="integrationHandoff">0</strong><em>Requires distributor or operator</em></article><article><small>Security</small><strong>SERVER</strong><em>Secrets never enter the browser</em></article></div>
-        <div class="integration-grid" id="integrationGrid"></div>
-        <article class="panel integration-policy"><div><p class="eyebrow">CONNECTION POLICY</p><h2>Credential boundaries</h2></div><ul><li>OAuth and API tokens remain server-side only</li><li>Unconnected services stay ready-to-configure or in controlled handoff</li><li>Live publishing still requires campaign and human approvals</li><li>Account revocation immediately removes publishing authority</li></ul></article>
-      </section>
 
-      <section class="view" id="preflight" data-title="Release Preflight">
-        <div class="section-intro"><div><p class="eyebrow">S16 — FINAL AUTHORITY</p><h1>No guesswork at launch.</h1><p>One evidence-based decision across creative quality, ownership, media, metadata and delivery.</p></div><button class="button" id="exportDossier">Export release dossier</button></div>
-        <div class="preflight-hero panel"><div class="preflight-gauge" id="preflightGauge"><strong id="preflightScore">0%</strong></div><div><p class="eyebrow" id="preflightTrack">SELECTED RELEASE</p><h2 id="preflightDecision">DO NOT RELEASE</h2><p id="preflightSummary">Critical release gates remain unresolved.</p></div><span class="preflight-badge blocked" id="preflightBadge">BLOCKED</span></div>
-        <div class="preflight-layout"><article class="panel"><div class="panel-head"><div><p class="eyebrow">EVIDENCE GATES</p><h2>Release readiness</h2></div><span class="status" id="gateCount">0 / 0</span></div><div class="preflight-gates" id="preflightGates"></div></article><article class="panel"><div class="panel-head"><div><p class="eyebrow">ACTION QUEUE</p><h2>Resolve blockers</h2></div></div><div class="blocker-list" id="preflightBlockers"></div></article></div>
-        <article class="panel release-decision"><div><p class="eyebrow">NAIRA MUSIC RELEASE AUTHORITY</p><h2 id="authorityTitle">Release remains blocked</h2><p id="authorityCopy">Complete every critical gate before scheduling external delivery.</p></div><button class="button" id="refreshPreflight">Run preflight again</button></article>
-      </section>
-
-      <section class="view" id="manual" data-title="Operator Manual">
-        <div class="section-intro"><div><p class="eyebrow">SIGNAL//OS FIELD GUIDE</p><h1>Run the label correctly.</h1><p>The operating sequence for Naira Music staff, NMC artists and NMC Signal programmers.</p></div><button class="button" id="downloadManual">Download manual</button></div>
-        <div class="manual-identities"><article class="panel"><span>01</span><small>THE LABEL</small><h2>Naira Music</h2><p>Owns strategy, rights administration, final release authority and external accounts.</p></article><article class="panel"><span>02</span><small>THE ARTISTS</small><h2>NMC</h2><p>Naira Music Cartel is the artist collective—not the label and not the radio station.</p></article><article class="panel"><span>03</span><small>THE CHANNEL</small><h2>NMC Signal</h2><p>The broadcast and rotation platform that programmes approved Naira Music records.</p></article></div>
-        <article class="panel manual-flow"><div class="panel-head"><div><p class="eyebrow">GOLDEN PATH</p><h2>Track-to-release sequence</h2></div><span class="status">DO NOT SKIP GATES</span></div><div class="manual-steps"><button data-manual-jump="artists"><b>1</b><span>Artist Bible<small>Define and lock the artist canon.</small></span></button><button data-manual-jump="track"><b>2</b><span>Track DNA<small>Make the creative decision first.</small></span></button><button data-manual-jump="suno"><b>3</b><span>Suno Engine<small>Generate with controlled provenance.</small></span></button><button data-manual-jump="qc"><b>4</b><span>BLACK SIGNAL QC<small>Score the record against evidence.</small></span></button><button data-manual-jump="rights"><b>5</b><span>Rights + Splits<small>Prove ownership and allocate 100%.</small></span></button><button data-manual-jump="assets"><b>6</b><span>Assets + Metadata<small>Store verified files and DSP facts.</small></span></button><button data-manual-jump="campaigns"><b>7</b><span>Campaign<small>Approve, package and schedule.</small></span></button><button data-manual-jump="preflight"><b>8</b><span>Preflight<small>Release only when every gate passes.</small></span></button></div></article>
-        <div class="manual-grid"><article class="panel"><p class="eyebrow">NEW ARTIST INTAKE</p><h2>Roster checklist</h2><ul><li>Create a draft Artist Bible</li><li>Define unique archetype and roster role</li><li>Lock vocal, production and visual rules</li><li>Record prohibited overlap with existing NMC artists</li><li>Lock canon only after Naira Music review</li></ul></article><article class="panel"><p class="eyebrow">NON-NEGOTIABLES</p><h2>Release safeguards</h2><ul><li>No invented legal credits or ownership shares</li><li>No live posting without authorised accounts</li><li>No release below BLACK SIGNAL 95</li><li>No distribution without real master and artwork</li><li>No campaign without four human approvals</li></ul></article><article class="panel"><p class="eyebrow">RECOVERY</p><h2>If something goes wrong</h2><ul><li>Stop external jobs before retrying</li><li>Check the Governance audit trail</li><li>Restore from the latest Data Custody backup</li><li>Re-run Integrations and Release Preflight</li><li>Never paste secret tokens into the browser</li></ul></article></div>
-      </section>
 
       <section class="view" id="settings" data-title="System Settings">
         <div class="section-intro"><div><p class="eyebrow">SIGNAL//OS · ADMINISTRATION</p><h1>Settings</h1><p>Control Naira Music identity, release policy, synchronisation and secure service readiness.</p></div><span class="status" id="settingsState">SAVED LOCALLY</span></div>
@@ -519,13 +407,12 @@
             <article class="panel settings-card"><div class="settings-head"><div><p class="eyebrow">CATALOGUE</p><h2>Website synchronisation</h2></div><span class="settings-icon">↻</span></div><div class="settings-fields"><label>Website URL<input name="websiteUrl" type="url" required></label><label>Sync interval<select name="syncMinutes"><option value="5">Every 5 minutes</option><option value="15">Every 15 minutes</option><option value="60">Every hour</option><option value="0">Manual only</option></select></label><label class="settings-toggle"><input name="autoSync" type="checkbox"> Automatically reconcile catalogue</label><label class="settings-toggle"><input name="syncOnStart" type="checkbox"> Sync when SIGNAL//OS starts</label></div><div class="settings-card-actions"><button class="button ghost" type="button" id="runSettingsSync">Sync catalogue now</button><span id="settingsSyncNote">No manual sync run</span></div></article>
             <article class="panel settings-card"><div class="settings-head"><div><p class="eyebrow">ALERTS</p><h2>Operator notifications</h2></div><span class="settings-icon">!</span></div><div class="settings-fields"><label class="settings-toggle"><input name="releaseAlerts" type="checkbox"> Release-gate alerts</label><label class="settings-toggle"><input name="rightsAlerts" type="checkbox"> Rights and split alerts</label><label class="settings-toggle"><input name="connectionAlerts" type="checkbox"> Integration health alerts</label><label class="settings-toggle"><input name="browserNotifications" type="checkbox"> Browser notifications</label></div><p class="settings-help">External email and mobile alerts remain inactive until an authorised messaging service is connected.</p></article>
           </div>
-          <article class="panel settings-services"><div class="panel-head"><div><p class="eyebrow">SECURE SERVICES</p><h2>Credential readiness</h2></div><button type="button" class="button ghost" id="openIntegrations">Open integrations</button></div><p class="settings-help">Secrets belong in the server environment, never in this page. Add them later using the named environment settings.</p><div class="settings-service-grid" id="settingsServices"></div></article>
-          <article class="panel settings-custody"><div><p class="eyebrow">DATA CUSTODY</p><h2>Backup and recovery</h2><p>Export a portable snapshot before major catalogue or connection changes.</p></div><div class="settings-card-actions"><button class="button ghost" type="button" id="exportSettingsBackup">Export full backup</button><button class="button" type="submit">Save settings</button></div></article>
+          <article class="panel settings-services"><div class="panel-head"><div><p class="eyebrow">SECURE SERVICES</p><h2>Credential readiness</h2></div></div><p class="settings-help">Secrets belong in the server environment, never in this page. Add them later using the named environment settings.</p><div class="settings-service-grid" id="settingsServices"></div></article>
+          <article class="panel settings-custody"><div class="panel-head"><div><p class="eyebrow">DATA CUSTODY</p><h2>Persistence &amp; recovery</h2><p>SIGNAL//OS state saves to nairamusic.com and this browser. Export a snapshot before major changes.</p></div><div class="settings-card-actions"><button class="button ghost" type="button" id="syncNow">Save snapshot</button><button class="button ghost" type="button" id="downloadBackup">Download backup</button></div></div><div class="custody-grid"><div><small>SERVER STORAGE</small><strong id="storageState">CHECKING</strong><span>Synced to nairamusic.com</span></div><div><small>LAST SAVED</small><strong id="lastSaved">—</strong><span>Browser and server synchronised</span></div><div><small>RECORDS</small><strong id="recordCount">—</strong><span>Artists, tracks and audit events</span></div></div><div class="settings-card-actions" style="margin-top:12px"><button class="button ghost" type="button" id="exportSettingsBackup">Export full backup</button><button class="button" type="submit">Save settings</button></div></article>
         </form>
       </section>
     </main>
   </div>
-  <aside class="notification-drawer" id="notificationDrawer" aria-hidden="true"><div class="notification-head"><div><p class="eyebrow">SIGNAL ALERTS</p><h2>Action required</h2></div><button id="closeNotifications" aria-label="Close notifications">×</button></div><div class="notification-list" id="notificationList"></div><button class="button ghost full" id="notificationPreflight">Open release preflight</button></aside>
   <dialog class="modal" id="artistDialog" aria-labelledby="artistDialogTitle">
     <form id="newArtistForm">
       <div class="modal-head"><div><p class="eyebrow">NAIRA MUSIC · ROSTER INTAKE</p><h2 id="artistDialogTitle">Add an NMC artist</h2></div><button type="button" class="close-button" id="closeArtist" aria-label="Close">×</button></div>
