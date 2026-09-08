@@ -243,7 +243,7 @@
       </section>
 
       <section class="view" id="suno" data-title="Suno Engine">
-        <div class="section-intro"><div><p class="eyebrow">S3 — SUNO ENGINE</p><h1>Prompt with provenance.</h1><p>Build controlled prompts for any NMC artist and log every generation.</p></div><span class="id-chip" id="sunoGenerationId">NMC · SELECTED TRACK</span></div>
+        <div class="section-intro"><div><p class="eyebrow">S3 — STUDIO</p><h1>Create a new song.</h1><p>Pick an artist, build the instrumental, lyrics and vocal, generate in Suno, then save the finished song straight to the catalogue.</p></div><span class="id-chip" id="sunoGenerationId">NEW SONG</span></div>
         <div class="grid two prompt-layout">
           <article class="panel">
             <div class="tabs"><button class="tab active" data-prompt="styles">Styles</button><button class="tab" data-prompt="instrumental">Instrumental</button><button class="tab" data-prompt="exclude">Exclusions</button></div>
@@ -295,17 +295,17 @@
 
         <article class="panel" id="sunoRecordPanel" style="margin-top:16px">
           <div class="panel-head">
-            <div><p class="eyebrow">SUNO OUTPUT</p><h2>Record generation result</h2></div>
+            <div><p class="eyebrow">SAVE THE SONG</p><h2>Add the finished song to the catalogue</h2></div>
             <span class="status amber" id="sunoRecordState">AWAITING INPUT</span>
           </div>
-          <p class="suno-record-note">Generate in <a href="https://suno.com" target="_blank" rel="noopener noreferrer">suno.com</a> using the prompts above, then paste the result here. A draft is created on NairaMusic.com immediately.</p>
+          <p class="suno-record-note">Name the song and paste the Suno result — it's created as a draft <code>nmc_track</code> on NairaMusic.com under the selected artist. Review &amp; publish it to put it on the radio.</p>
           <form class="form-grid" id="sunoRecordForm">
+            <label>Song title<input name="song_title" id="songTitle" placeholder="e.g. KOMOT!" required></label>
             <label>Suno song page URL<input name="suno_page" type="url" placeholder="https://suno.com/song/…"></label>
             <label>Direct audio URL (.mp3)<input name="suno_audio" type="url" placeholder="https://cdn1.suno.ai/…"></label>
-            <label>Generation code<input name="gen_code" placeholder="G01-A" value="G01-A"></label>
             <label>Notes<input name="notes" placeholder="Canon take · hook lands at 0:24"></label>
             <div class="suno-record-actions">
-              <button type="submit" class="button" id="recordSunoBtn">Record &amp; Push to NairaMusic.com →</button>
+              <button type="submit" class="button" id="recordSunoBtn">Save new song →</button>
               <span id="sunoRecordResult" class="suno-record-result" hidden></span>
             </div>
           </form>
@@ -331,30 +331,6 @@
           </div>
         </article>
 
-        <!-- ══ STUDIO: SOCIAL ══ -->
-        <article class="panel" id="studioSocial" style="margin-top:16px">
-          <div class="panel-head">
-            <div><p class="eyebrow">SOCIAL — ASSISTED</p><h2>Captions</h2><p style="color:var(--muted);font-size:.82rem">Auto-written from the track &amp; artist DNA. Copy, open the composer, post. Auto-posting needs OAuth apps — off by design.</p></div>
-            <div style="display:flex;gap:6px;flex-wrap:wrap">
-              <a class="button ghost small" href="https://studio.youtube.com" target="_blank" rel="noopener">YouTube ↗</a>
-              <a class="button ghost small" href="https://www.instagram.com" target="_blank" rel="noopener">Instagram ↗</a>
-              <a class="button ghost small" href="https://www.tiktok.com/upload" target="_blank" rel="noopener">TikTok ↗</a>
-            </div>
-          </div>
-          <div class="tabs" id="socialTabs" style="margin-bottom:8px"></div>
-          <textarea id="socialCaption" class="prompt-box" rows="5" placeholder="Select an artist/track to write a caption…" style="font-size:.82rem"></textarea>
-          <div style="display:flex;gap:8px;margin-top:10px"><button class="button ghost small" id="socialRegen">Regenerate</button><button class="button small" id="socialCopy">Copy caption</button></div>
-        </article>
-
-        <!-- ══ STUDIO: DISTRIBUTION (DISTROKID) ══ -->
-        <article class="panel" id="studioDistro" style="margin-top:16px">
-          <div class="panel-head">
-            <div><p class="eyebrow">DISTRIBUTION — DISTROKID (HANDOFF)</p><h2>Release delivery</h2><p style="color:var(--muted);font-size:.82rem">DistroKid has no public API — this exports the exact metadata and opens DistroKid for the operator to upload.</p></div>
-            <a class="button ghost small" href="https://distrokid.com/new" target="_blank" rel="noopener noreferrer">Open DistroKid ↗</a>
-          </div>
-          <div id="distroChecklist" style="font-size:.85rem"></div>
-          <div style="display:flex;gap:8px;margin-top:12px"><button class="button ghost small" id="distroExport">Export release metadata</button></div>
-        </article>
       </section>
 
 

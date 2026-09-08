@@ -198,37 +198,33 @@ function renderSettings(){if(!$('#settingsForm'))return;const settings=ensureSet
 $$('[data-manual-jump]').forEach(b=>b.onclick=()=>navigate(b.dataset.manualJump));($('#downloadManual')||{}).onclick=()=>{const manual=`# SIGNAL//OS Operator Manual\n\n## Organisation\n- Naira Music: label, ownership, strategy and final authority.\n- NMC / Naira Music Cartel: the artist collective.\n- NMC Signal: radio and broadcast channel.\n\n## Golden Path\n1. Create and lock the Artist Bible.\n2. Define Track DNA.\n3. Generate through the controlled Suno workflow.\n4. Pass BLACK SIGNAL QC at 95 or above.\n5. Complete the Rights Ledger and lock 100% master/publishing splits.\n6. Store verified masters and artwork; lock DSP metadata.\n7. Obtain label, artist, rights and content approvals.\n8. Build the campaign package and run Release Preflight.\n9. Release only when every critical gate passes.\n\n## Non-negotiables\n- Never invent legal credits or ownership shares.\n- Never expose credentials in the browser.\n- Never claim an unconnected platform is live.\n- Never distribute without a verified master and artwork.\n- Preserve the governance audit and recovery backups.\n`;const blob=new Blob([manual],{type:'text/markdown'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='signal-os-operator-manual.md';a.click();URL.revokeObjectURL(a.href);logActivity('OPERATOR MANUAL EXPORTED','SIGNAL//OS field guide downloaded');toast('Operator manual downloaded')};
 ($('#sunoRecordForm')||{}).onsubmit=async e=>{
   e.preventDefault();
-  const t=currentTrack();
   const f=new FormData(e.target);
+  const title=(f.get('song_title')||'').trim()||(currentTrack()&&currentTrack().title)||'';
+  const artist=_studioArtist();
   const sunoPage=f.get('suno_page')||'';
   const sunoAudio=f.get('suno_audio')||'';
-  const genCode=(f.get('gen_code')||'G01-A').trim();
-  const notes=f.get('notes')||'';
   const btn=$('#recordSunoBtn');
   const resultEl=$('#sunoRecordResult');
   const stateEl=$('#sunoRecordState');
-  btn.disabled=true;btn.textContent='Pushing…';resultEl.hidden=true;
+  if(!title){toast('Enter a song title');return;}
+  if(!artist){toast('Pick an artist in the launcher above');return;}
+  const dna=dnaFor(artist)||{};
+  btn.disabled=true;btn.textContent='Saving…';if(resultEl)resultEl.hidden=true;
   try{
-    const result=await api('/api/publish',{method:'POST',body:JSON.stringify({trackId:t.id,title:t.title,artist:t.artist,genre:t.dna?.genre||'',bpm:String(t.dna?.bpm||''),signal_tier:t.rotation||'',suno_url:sunoAudio||sunoPage,explicit:t.dna?.explicit||'',hook:t.dna?.hook||''})});
-    if(!t.generations)t.generations=[];
-    if(!t.generations.find(g=>g.code===genCode))t.generations.push({code:genCode,name:notes||genCode,note:`Recorded ${new Date().toLocaleDateString('en-GB')}`,state:'KEEPER',sunoPage,sunoAudio});
-    if(t.dna)t.dna.suno_url=sunoAudio||sunoPage;
-    t.status='QC Hold';
-    if(t.automationJobId&&data.jobs){const jb=data.jobs.find(j=>j.id===t.automationJobId);if(jb){jb.status='DRAFT PUSHED';jb.updatedAt=new Date().toISOString();}}
-    save();renderPipeline();renderOverview();renderGenerations();if(typeof renderJobs==='function')renderJobs();
+    const result=await api('/api/publish',{method:'POST',body:JSON.stringify({title,artist,genre:dna.genre||'',bpm:String(dna.bpm||''),suno_url:sunoAudio||sunoPage,explicit:dna.explicit||'Explicit',hook:dna.hook||''})});
     const postId=result.result?.id;const editUrl=result.result?.editUrl;
-    stateEl.textContent='PUSHED';stateEl.className='status';
-    resultEl.textContent=postId?`Draft #${postId} created on nairamusic.com — review in WP Admin before publishing`:'Recorded (dry-run)';
-    resultEl.className='suno-record-result pass';resultEl.hidden=false;
-    logActivity('SUNO OUTPUT RECORDED',`${t.artist} — ${t.title}: ${genCode}${postId?` · WP draft #${postId}`:''}`);
-    toast(postId?`Draft #${postId} live on nairamusic.com`:'Recorded in dry-run mode');
-    if(editUrl)setTimeout(()=>{if(confirm(`Draft #${postId} created. Open in WordPress Admin to review and publish?`))window.open(editUrl,'_blank','noopener')},600);
-    e.target.reset();$('[name=gen_code]',e.target).value='G01-A';
+    if(stateEl){stateEl.textContent='SAVED';stateEl.className='status';}
+    if(resultEl){resultEl.textContent=postId?`Draft #${postId} created on nairamusic.com — review in WP Admin, then publish to put it on the radio`:'Saved (dry-run)';resultEl.className='suno-record-result pass';resultEl.hidden=false;}
+    logActivity('NEW SONG SAVED',`${artist} — ${title}${postId?` · WP draft #${postId}`:''}`);
+    toast(postId?`“${title}” saved as draft #${postId}`:'Saved in dry-run mode');
+    try{if(typeof syncTracksFromWP==='function'){await syncTracksFromWP(true);renderCatalogue();}}catch(_){}
+    if(editUrl)setTimeout(()=>{if(confirm(`Draft #${postId} created for “${title}”. Open it in WordPress to review and publish?`))window.open(editUrl,'_blank','noopener')},600);
+    e.target.reset();
   }catch(error){
-    stateEl.textContent='FAILED';stateEl.className='status amber';
-    resultEl.textContent=error.message;resultEl.className='suno-record-result fail';resultEl.hidden=false;
+    if(stateEl){stateEl.textContent='FAILED';stateEl.className='status amber';}
+    if(resultEl){resultEl.textContent=error.message;resultEl.className='suno-record-result fail';resultEl.hidden=false;}
     toast(error.message);
-  }finally{btn.disabled=false;btn.textContent='Record & Push to NairaMusic.com →'}
+  }finally{btn.disabled=false;btn.textContent='Save new song →'}
 };
 ($('#exportButton')||{}).onclick=()=>{const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='signal-os-export.json';a.click();URL.revokeObjectURL(a.href);toast('SIGNAL//OS data exported')};
 // ── RADIO MODULE ────────────────────────────────────────────────────────────
@@ -436,7 +432,6 @@ if($('#refreshTracksByArtistBtn'))($('#refreshTracksByArtistBtn')||{}).onclick=(
 // ── LEADERBOARD (live charts from nairamusic.com) ────────────────────────────
 async function renderLeaderboard(){const panel=$('#leaderboardPanel');if(!panel)return;try{const d=await api('/api/radio/charts');const list=Array.isArray(d)?d:(d&&(d.tracks||d.top_tracks))||[];if(!list.length){panel.innerHTML='<p class="radio-empty">No chart data yet — plays are still accumulating.</p>';return;}panel.innerHTML=list.slice(0,20).map((t,i)=>{const rank=t.rank||i+1;const mv=t.movement||{};const dir=mv.direction==='up'?'▲ '+(mv.places||''):mv.direction==='down'?'▼ '+(mv.places||''):mv.direction==='new'?'NEW':'–';const col=mv.direction==='up'?'var(--green,#3fbf6a)':mv.direction==='down'?'#d9534f':'var(--muted,#9a9)';const plays=t.play_count!=null?t.play_count:(t.plays!=null?t.plays:(t.streams||0));const cover=t.cover||'';return `<div style="display:flex;align-items:center;gap:10px;padding:8px 4px;border-bottom:1px solid var(--line,#2a2a1f)"><span style="min-width:24px;font-weight:700;color:var(--gold,#d8b45a);font-variant-numeric:tabular-nums">${rank}</span>${cover?`<img src="${cover}" alt="" style="width:34px;height:34px;border-radius:5px;object-fit:cover">`:'<span style="width:34px;height:34px;display:grid;place-items:center;background:#1a1a12;border-radius:5px">♫</span>'}<div style="flex:1;min-width:0"><b style="display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${t.title||'Untitled'}</b><small style="color:var(--muted,#9a9)">${t.artist||''}</small></div><span style="min-width:48px;text-align:right;font-size:.75rem;color:${col}">${dir}</span><span style="min-width:70px;text-align:right;font-variant-numeric:tabular-nums;color:var(--muted,#9a9);font-size:.8rem">${plays} ${plays===1?'play':'plays'}</span></div>`}).join('');}catch(e){panel.innerHTML=`<p class="fail">Leaderboard unavailable: ${e.message}</p>`;}}
 // ── STUDIO: Visuals (Kling) · Social captions · Distribution (DistroKid) ─────
-const SOCIAL_PLATFORMS=['YouTube','Instagram','TikTok','X'];let _socialPlatform='YouTube';
 function _studioArtist(){return ($('#launchArtistSelect')&&$('#launchArtistSelect').value)||(currentTrack()&&currentTrack().artist)||''}
 function _studioStore(a){const k=(a||'').toUpperCase().replace(/[^A-Z]/g,'');if(!data.artistPrompts)data.artistPrompts={};if(!data.artistPrompts[k])data.artistPrompts[k]={};return data.artistPrompts[k]}
 function _klingSeed(a){const dna=dnaFor(a)||{};const art=(data.artists||[]).find(x=>x.name&&x.name.toLowerCase()===String(a).toLowerCase())||{};const visual=art.visual||art.visualIdentity||'';const style=dna.style||dna.instrumental||'';return `Music cover art / performance visual for ${a}. ${visual?visual+'. ':''}World and mood from the sound: ${style||'Afrobeats, dark, cinematic'}. Cinematic lighting, high detail, square 1:1 cover framing (also export a 9:16 cut for Reels/Shorts). No text, no watermark, no logo.`}
@@ -445,21 +440,13 @@ function NMC_renderStudio(){if(!$('#klingPrompt'))return;const a=_studioArtist()
   // Visuals
   const kp=$('#klingPrompt');if(kp){kp.value=(store.visualPrompt!=null&&store.visualPrompt!=='')?store.visualPrompt:(a?_klingSeed(a):'');kp.oninput=()=>{if(a){_studioStore(a).visualPrompt=kp.value;save();_syncSoon();}};}
   const ka=$('#klingAssets');if(ka){const list=(store.visuals||[]);ka.innerHTML=list.length?list.slice().reverse().map((v,i)=>`<div style="display:flex;gap:8px;align-items:center;padding:6px 0;border-top:1px solid var(--line)"><span class="tag">${v.type||'ASSET'}</span><a href="${v.url}" target="_blank" rel="noopener" style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.78rem">${v.url}</a><button class="button ghost small" data-kling-del="${list.length-1-i}">×</button></div>`).join(''):'<p style="color:var(--muted);font-size:.78rem">No visuals logged yet.</p>';$$('[data-kling-del]').forEach(b=>b.onclick=()=>{const s=_studioStore(a);s.visuals.splice(+b.dataset.klingDel,1);save();_syncSoon();NMC_renderStudio();});}
-  // Social
-  const st=$('#socialTabs');if(st){st.innerHTML=SOCIAL_PLATFORMS.map(p=>`<button type="button" class="tab ${p===_socialPlatform?'active':''}" data-social="${p}">${p}</button>`).join('');$$('[data-social]').forEach(b=>b.onclick=()=>{_socialPlatform=b.dataset.social;NMC_renderStudio();});}
-  const sc=$('#socialCaption');if(sc&&a){sc.value=(store.captions&&store.captions[_socialPlatform]!=null)?store.captions[_socialPlatform]:_socialCaption(_socialPlatform,a,t);sc.oninput=()=>{const s=_studioStore(a);s.captions=s.captions||{};s.captions[_socialPlatform]=sc.value;save();_syncSoon();};}else if(sc){sc.value='';}
-  // Distribution
-  const dc=$('#distroChecklist');if(dc){const dna=(t&&t.dna)||{};const rows=[['Title',t&&t.title],['Artist',t&&t.artist],['Audio master',t&&(t.audioUrl||dna.suno_url)],['Cover art',t&&(t.coverUrl||t.cover)],['Genre',dna.genre||(t&&t.genre)],['BPM',dna.bpm||(t&&t.bpm)],['Explicit',dna.explicit||'Explicit'],['℗ / ©','Naira Music '+new Date().getFullYear()]];dc.innerHTML=t?rows.map(([k,v])=>`<div style="display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-top:1px solid var(--line)"><span style="color:var(--muted)">${k}</span><b style="text-align:right;${v?'':'color:#d9534f'}">${v||'MISSING'}</b></div>`).join(''):'<p style="color:var(--muted);font-size:.82rem">Select a track (Catalogue → Open) to build its release sheet.</p>';}
 }
 // one-time Studio wiring
 (function(){
   const cp=$('#klingCopy');if(cp)cp.onclick=()=>{navigator.clipboard.writeText($('#klingPrompt').value||'');toast('Visual prompt copied');};
   const kl=$('#klingLog');if(kl)kl.onclick=()=>{const a=_studioArtist(),url=($('#klingResultUrl').value||'').trim();if(!a){toast('Select an artist first');return;}if(!url){toast('Paste the Kling URL');return;}const s=_studioStore(a);s.visuals=s.visuals||[];const type=/\.(mp4|mov|webm)(\?|$)/i.test(url)?'VIDEO':'IMAGE';s.visuals.push({url,type,at:new Date().toISOString()});save();_syncSoon();$('#klingResultUrl').value='';($('#klingState')||{}).textContent='Attached to '+a;NMC_renderStudio();toast('Visual attached to '+a);};
   const kpc=$('#klingPushCover');if(kpc)kpc.onclick=async()=>{const t=currentTrack(),url=($('#klingResultUrl').value||'').trim();const wpId=t&&(t.wpPostId||(/^\d+$/.test(String(t.id))?t.id:(String(t.id).match(/(\d+)/)||[])[1]));if(!t){toast('Open a track from the Catalogue first');return;}if(!wpId){toast('This track isn’t on the website yet — publish it first');return;}if(!url){toast('Paste the Kling image URL');return;}($('#klingState')||{}).textContent='Pushing cover…';try{const r=await api('/api/site/track-cover',{method:'POST',body:JSON.stringify({id:Number(wpId),cover_url:url})});($('#klingState')||{}).textContent='Cover set on website ✓';toast('Track cover updated on nairamusic.com');logActivity('COVER PUSHED',`${t.artist} — ${t.title}`);}catch(e){($('#klingState')||{}).textContent='Endpoint not installed — see Desktop snippet';toast('Cover endpoint not installed yet');}};
-  const sr=$('#socialRegen');if(sr)sr.onclick=()=>{const a=_studioArtist();if(a){const s=_studioStore(a);if(s.captions)delete s.captions[_socialPlatform];save();}NMC_renderStudio();toast('Caption regenerated from DNA');};
-  const scp=$('#socialCopy');if(scp)scp.onclick=()=>{navigator.clipboard.writeText($('#socialCaption').value||'');toast(_socialPlatform+' caption copied');};
-  const dx=$('#distroExport');if(dx)dx.onclick=()=>{const t=currentTrack();if(!t)return toast('Open a track first');const dna=t.dna||{};const payload={schema:'nmc-distrokid-release-v1',exportedAt:new Date().toISOString(),label:'Naira Music',title:t.title,artist:t.artist,genre:dna.genre||t.genre||'',bpm:dna.bpm||t.bpm||'',explicit:dna.explicit||'Explicit',audio_url:t.audioUrl||dna.suno_url||'',cover:t.coverUrl||t.cover||'',pLine:'Naira Music '+new Date().getFullYear(),cLine:'Naira Music '+new Date().getFullYear(),territories:'Worldwide'};const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}),el=document.createElement('a');el.href=URL.createObjectURL(blob);el.download=`distrokid-${String(t.title||'release').toLowerCase().replace(/[^a-z0-9]+/g,'-')}.json`;el.click();URL.revokeObjectURL(el.href);toast('Release metadata exported for DistroKid');};
-  const sel=$('#launchArtistSelect');// refresh studio when the artist changes
+  // refresh studio when the launcher artist changes
   document.addEventListener('change',e=>{if(e.target&&e.target.id==='launchArtistSelect')NMC_renderStudio();});
 })();
 // ── A&R: Roster (artist CRUD) + Shop (WooCommerce product CRUD) ──────────────
