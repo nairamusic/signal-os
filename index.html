@@ -93,7 +93,20 @@
             <a class="button ghost small" href="https://nairamusic.com/wp-admin/" target="_blank" rel="noopener">WP Admin ↗</a>
           </div>
         </div>
-        <article class="panel"><div id="siteSyncPanel"><p class="muted-note" style="color:var(--muted);font-size:.82rem;padding:8px 0">Loading site data…</p></div></article>
+        <!-- A&R QUEUE — submissions review pipeline -->
+        <article class="panel" style="border:1px solid #4a3f1e">
+          <div class="panel-head">
+            <div><p class="eyebrow">A&amp;R QUEUE — SUBMISSIONS</p><h2>Review incoming tracks</h2></div>
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+              <span id="subCounts" style="font-size:.72rem;color:var(--muted)"></span>
+              <select id="subFilter" style="padding:6px 8px;background:#0b0a07;border:1px solid #3a3320;border-radius:6px;color:#f0e6cf;font-size:12px"><option value="pending">Pending</option><option value="approved">Approved</option><option value="rejected">Rejected</option><option value="">All</option></select>
+              <button class="button ghost small" id="subRefresh">↻ Refresh</button>
+            </div>
+          </div>
+          <div id="submissionsList"><p class="muted-note" style="color:var(--muted);font-size:.82rem;padding:8px 0">Loading submissions…</p></div>
+        </article>
+
+        <article class="panel" style="margin-top:12px"><div id="siteSyncPanel"><p class="muted-note" style="color:var(--muted);font-size:.82rem;padding:8px 0">Loading site data…</p></div></article>
 
         <!-- ROSTER (artist add/edit/delete) -->
         <article class="panel" style="margin-top:12px">
