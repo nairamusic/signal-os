@@ -125,7 +125,10 @@ export async function onRequest(context) {
   // playlist_length / current_show and d.track_count. WP's nmcsignal/v1/status only
   // returns A&R sync data, so compose the real radio state from the nmc-radio endpoints.
   if (path === "radio/status") {
-    const wp = (p, hdr) => fetch(base + p, { headers: hdr || { Accept: "application/json" } })
+    // Cache-bust every subrequest — GoDaddy edge-caches these WP GETs, which froze the
+    // Signal//OS now-playing on a stale track while the live site had already rotated on.
+    const wp = (p, hdr) => fetch(base + p + (p.includes("?") ? "&" : "?") + "_=" + Date.now(),
+      { headers: hdr || { Accept: "application/json" }, cf: { cacheTtl: 0, cacheEverything: false } })
       .then((r) => (r.ok ? r.json() : null)).catch(() => null);
     const [now, playlistRaw, sched, statusData] = await Promise.all([
       wp("/wp-json/nmc-radio/v1/now"),
