@@ -210,12 +210,18 @@ export async function onRequest(context) {
     return json({ dryRun: true, message: "NMC_SIGNAL_KEY not configured", submissions: [], artists: [], tracks: [], playlist: [], count: 0 });
   }
 
-  const wpUrl = base + route.wp + (url.search || "");
+  // GoDaddy edge-caches WP REST GETs, which returns stale data right after a write
+  // (e.g. a submission just approved still shows "pending"). Cache-bust every proxied
+  // GET and tell Cloudflare not to cache either, so the dashboard always reads fresh.
+  const isGet = ["GET", "HEAD"].includes(request.method);
+  const bust = isGet ? ((url.search ? "&" : "?") + "_=" + Date.now()) : "";
+  const wpUrl = base + route.wp + (url.search || "") + bust;
 
   const init = {
     method: request.method,
     headers: { "X-Signal-Key": key, "Accept": "application/json" },
   };
+  if (isGet) init.cf = { cacheTtl: 0, cacheEverything: false };
   if (!["GET", "HEAD"].includes(request.method)) {
     init.headers["content-type"] = request.headers.get("content-type") || "application/json";
     init.body = await request.text();
