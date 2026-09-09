@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#070707">
   <title>SIGNAL//OS — Naira Music Creative Intelligence</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="structure.css">
   <link rel="stylesheet" href="rotation.css">
@@ -15,6 +16,13 @@
   <link rel="stylesheet" href="radio.css">
   <link rel="stylesheet" href="catalogue.css">
   <link rel="stylesheet" href="settings.css">
+  <style>
+    .app-foot{display:flex;align-items:center;gap:16px;justify-content:center;flex-wrap:wrap;padding:16px 12px;border-top:1px solid var(--line,#2a2a1f);margin-top:22px}
+    .app-foot .foot-label{font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted,#9a8f6f)}
+    .app-foot .foot-copy{font-size:.68rem;color:var(--muted,#9a8f6f);margin-left:6px}
+    .social-ic{color:var(--muted,#9a8f6f);font-size:1.3rem;text-decoration:none;transition:color .15s,transform .15s;display:inline-flex}
+    .social-ic:hover{color:var(--gold,#d8b45a);transform:translateY(-1px)}
+  </style>
 </head>
 <body>
   <div class="shell">
@@ -70,20 +78,6 @@
           <article><small>Radio-ready</small><strong id="blackMetric">—</strong><em>Tracks with audio</em></article>
           <article><small>Drafts</small><strong id="rightsMetric">—</strong><em>Awaiting review</em></article>
         </div>
-        <article class="panel" style="margin-bottom:12px">
-          <div class="panel-head"><div><p class="eyebrow">NMC — OFFICIAL CHANNELS</p><h2>Naira Music Cartel online</h2></div></div>
-          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:6px">
-            <a class="button ghost small" href="https://soundcloud.com/nairamusic-nmc" target="_blank" rel="noopener">☁ SoundCloud</a>
-            <a class="button ghost small" href="https://www.youtube.com/@NairaMusicCartel" target="_blank" rel="noopener">▶ YouTube</a>
-            <a class="button ghost small" href="https://www.youtube.com/@NairaMusicTV" target="_blank" rel="noopener">▶ NMC TV</a>
-            <a class="button ghost small" href="https://instagram.com/nairamusicartel" target="_blank" rel="noopener">◎ Instagram</a>
-            <a class="button ghost small" href="https://www.tiktok.com/@NairaMusicCartel" target="_blank" rel="noopener">♪ TikTok</a>
-            <a class="button ghost small" href="https://x.com/Nairamusic" target="_blank" rel="noopener">✕ Twitter / X</a>
-            <a class="button ghost small" href="https://www.facebook.com/nairamusic" target="_blank" rel="noopener">f Facebook</a>
-            <a class="button ghost small" href="https://discord.gg/bvTZWcZXVa" target="_blank" rel="noopener">✦ Discord</a>
-            <a class="button ghost small" href="https://nairamusic.com/radio/" target="_blank" rel="noopener">📻 Radio</a>
-          </div>
-        </article>
         <div class="grid two">
           <article class="panel">
             <div class="panel-head"><div><p class="eyebrow">LIVE CATALOGUE</p><h2>Work requiring attention</h2></div><button class="text-button" data-jump="catalogue">View catalogue →</button></div>
@@ -487,6 +481,18 @@
           <article class="panel settings-custody"><div class="panel-head"><div><p class="eyebrow">DATA CUSTODY</p><h2>Persistence &amp; recovery</h2><p>SIGNAL//OS state saves to nairamusic.com and this browser. Export a snapshot before major changes.</p></div><div class="settings-card-actions"><button class="button ghost" type="button" id="syncNow">Save snapshot</button><button class="button ghost" type="button" id="downloadBackup">Download backup</button></div></div><div class="custody-grid"><div><small>SERVER STORAGE</small><strong id="storageState">CHECKING</strong><span>Synced to nairamusic.com</span></div><div><small>LAST SAVED</small><strong id="lastSaved">—</strong><span>Browser and server synchronised</span></div><div><small>RECORDS</small><strong id="recordCount">—</strong><span>Artists, tracks and audit events</span></div></div><div class="settings-card-actions" style="margin-top:12px"><button class="button ghost" type="button" id="exportSettingsBackup">Export full backup</button><button class="button" type="submit">Save settings</button></div></article>
         </form>
       </section>
+      <footer class="app-foot">
+        <span class="foot-label">NMC Channels</span>
+        <a href="https://soundcloud.com/nairamusic-nmc" target="_blank" rel="noopener" class="social-ic" title="SoundCloud" aria-label="SoundCloud"><i class="fa-brands fa-soundcloud"></i></a>
+        <a href="https://www.youtube.com/@NairaMusicCartel" target="_blank" rel="noopener" class="social-ic" title="YouTube" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+        <a href="https://www.youtube.com/@NairaMusicTV" target="_blank" rel="noopener" class="social-ic" title="NMC TV" aria-label="NMC TV"><i class="fa-brands fa-youtube" style="opacity:.7"></i></a>
+        <a href="https://instagram.com/nairamusicartel" target="_blank" rel="noopener" class="social-ic" title="Instagram" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+        <a href="https://www.tiktok.com/@NairaMusicCartel" target="_blank" rel="noopener" class="social-ic" title="TikTok" aria-label="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+        <a href="https://x.com/Nairamusic" target="_blank" rel="noopener" class="social-ic" title="Twitter / X" aria-label="Twitter / X"><i class="fa-brands fa-x-twitter"></i></a>
+        <a href="https://www.facebook.com/nairamusic" target="_blank" rel="noopener" class="social-ic" title="Facebook" aria-label="Facebook"><i class="fa-brands fa-facebook"></i></a>
+        <a href="https://discord.gg/bvTZWcZXVa" target="_blank" rel="noopener" class="social-ic" title="Discord" aria-label="Discord"><i class="fa-brands fa-discord"></i></a>
+        <span class="foot-copy">© Naira Music · NMC Signal</span>
+      </footer>
     </main>
   </div>
   <dialog class="modal" id="artistDialog" aria-labelledby="artistDialogTitle">
