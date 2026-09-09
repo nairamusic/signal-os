@@ -178,8 +178,13 @@ $$('[data-manual-jump]').forEach(b=>b.onclick=()=>navigate(b.dataset.manualJump)
 // ── RADIO MODULE ────────────────────────────────────────────────────────────
 let _radioData=null,_countdownInterval=null;
 function fmtSecs(s){const m=Math.floor(s/60),r=s%60;return`${m}:${String(r).padStart(2,'0')}`}
-function startCountdown(remaining){clearInterval(_countdownInterval);let s=Math.max(0,Math.round(remaining));const el=$('#radioCountdown');if(!el)return;el.textContent=`next in ${fmtSecs(s)}`;_countdownInterval=setInterval(()=>{s=Math.max(0,s-1);if(el)el.textContent=`next in ${fmtSecs(s)}`;if(s===0){clearInterval(_countdownInterval);setTimeout(renderRadio,1200)}},1000)}
+let _radioInFlight=false;
+// Display-only countdown ticker. Does NOT re-trigger renderRadio (that caused a runaway
+// ~2s loop whenever `remaining` was 0 — true for any track without a duration — hammering
+// GoDaddy into 502s). Re-polling is handled solely by the visibility-gated poller below.
+function startCountdown(remaining){clearInterval(_countdownInterval);let s=Math.max(0,Math.round(remaining));const el=$('#radioCountdown');if(!el)return;el.textContent=`next in ${fmtSecs(s)}`;if(s<=0)return;_countdownInterval=setInterval(()=>{if(document.hidden||!document.querySelector('#signal.view.active')){clearInterval(_countdownInterval);return;}s=Math.max(0,s-1);if(el)el.textContent=`next in ${fmtSecs(s)}`;if(s===0)clearInterval(_countdownInterval);},1000)}
 async function renderRadio(){
+  if(_radioInFlight)return;_radioInFlight=true;
   const dot=$('#radioDot'),status=$('#radioLiveStatus');
   if(dot)dot.className='radio-status-dot';
   try{
@@ -234,7 +239,7 @@ async function renderRadio(){
     if(status){status.textContent='OFFLINE';if(dot)dot.className='radio-status-dot offline';}
     if($('#radioNowTitle'))$('#radioNowTitle').textContent='Cannot reach NairaMusic.com';
     toast('Radio status unavailable: '+e.message);
-  }
+  }finally{_radioInFlight=false;}
 }
 ($('#refreshRadio')||{}).onclick=()=>{renderRadio();renderLeaderboard();};
 // ── RADIO PLAYLIST ─────────────────────────────────────────────────────────
@@ -452,8 +457,8 @@ async function NMC_renderShop(){const box=$('#arShopList');if(!box)return;try{co
 ($('#arProductAdd')||{}).onclick=()=>_arModal('Add product',[{k:'name',label:'Name'},{k:'price',label:'Price',type:'number'},{k:'sku',label:'SKU'},{k:'stock',label:'Stock (blank = untracked)',type:'number'},{k:'status',label:'Status',type:'select',val:'publish',opts:['publish','draft','private']},{k:'image_url',label:'Image URL (optional)',type:'url'},{k:'description',label:'Description',type:'textarea'}],async v=>{if(!v.name)throw new Error('Name required');await api('/api/site/product-save',{method:'POST',body:JSON.stringify(v)});toast('Product created');NMC_renderShop();});
 // ── AUTO-POLLING ─────────────────────────────────────────────────────────────
 // Radio refreshes every 20s when signal view is visible; catalogue sync follows Settings.
-setInterval(()=>{if(document.querySelector('#signal.view.active'))renderRadio();},20000);
-let lastCataloguePoll=Date.now();setInterval(()=>{const settings=ensureSettings(),minutes=Number(settings.syncMinutes);if(!settings.autoSync||!minutes||Date.now()-lastCataloguePoll<minutes*60000)return;lastCataloguePoll=Date.now();syncTracksFromWP(true).then(()=>{renderCatalogue();if(document.querySelector('#signal.view.active'))renderTracksByArtist()});},60000);
+setInterval(()=>{if(!document.hidden&&document.querySelector('#signal.view.active'))renderRadio();},20000);
+let lastCataloguePoll=Date.now();setInterval(()=>{if(document.hidden)return;const settings=ensureSettings(),minutes=Number(settings.syncMinutes);if(!settings.autoSync||!minutes||Date.now()-lastCataloguePoll<minutes*60000)return;lastCataloguePoll=Date.now();syncTracksFromWP(true).then(()=>{renderCatalogue();if(document.querySelector('#signal.view.active'))renderTracksByArtist()});},60000);
 // ── END RADIO MODULE ─────────────────────────────────────────────────────────
 if(!data.audit.length)logActivity('SYSTEM INITIALISED','SIGNAL//OS ledger created');renderOverview();renderArtists();renderBibleFoundation();renderArtistOptions();renderTrackSelector();renderGenerations();renderRotation();renderCatalogue();loadTrackForm();loadStorageStatus();renderSettings();save();
 if(location.hash&&titles[location.hash.slice(1)])navigate(location.hash.slice(1));
