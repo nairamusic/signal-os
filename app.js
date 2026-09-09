@@ -333,7 +333,12 @@ async function syncTracksFromWP(silent=false){
     // (seed/test entries never pushed to WordPress). Guarded: only when the catalogue actually loaded,
     // so an offline/failed fetch never wipes the cache.
     if(cat.status==='fulfilled'&&cat.value&&!cat.value.dryRun&&Array.isArray(cat.value.tracks)&&cat.value.tracks.length){
-      const _n=data.tracks.length;data.tracks=data.tracks.filter(t=>t.wpSynced);const _pruned=_n-data.tracks.length;if(_pruned)updated+=_pruned;
+      const _nt=s=>(s||'').toString().trim().toLowerCase();
+      const _liveIds=new Set(cat.value.tracks.map(t=>t.id));
+      const _livePl=new Set((((playlist.status==='fulfilled'&&playlist.value)?(playlist.value.playlist||playlist.value):[])||[]).map(t=>_nt(t.title)));
+      const _n=data.tracks.length;
+      data.tracks=data.tracks.filter(t=>(t.wpPostId&&_liveIds.has(t.wpPostId))||_livePl.has(_nt(t.title)));
+      const _pruned=_n-data.tracks.length;if(_pruned)updated+=_pruned;
     }
     if(added||updated){
       save();renderOverview();renderPipeline();renderRotation();renderTrackSelector();
