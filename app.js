@@ -327,6 +327,12 @@ async function syncTracksFromWP(silent=false){
     // Purge duplicates created by previous syncs
     const removed=_deduplicateTracks();
     if(removed)updated+=removed;
+    // Self-heal: keep the local cache mirroring the live catalogue — drop stale local-only tracks
+    // (seed/test entries never pushed to WordPress). Guarded: only when the catalogue actually loaded,
+    // so an offline/failed fetch never wipes the cache.
+    if(cat.status==='fulfilled'&&cat.value&&!cat.value.dryRun&&Array.isArray(cat.value.tracks)&&cat.value.tracks.length){
+      const _n=data.tracks.length;data.tracks=data.tracks.filter(t=>t.wpSynced);const _pruned=_n-data.tracks.length;if(_pruned)updated+=_pruned;
+    }
     if(added||updated){
       save();renderOverview();renderPipeline();renderRotation();renderTrackSelector();
       if(!silent)toast(`Sync: +${added} added, ${updated} updated/deduped from nairamusic.com`);
