@@ -151,7 +151,7 @@
       </section>
 
       <section class="view" id="artists" data-title="Artist Bible">
-        <div class="section-intro"><div><p class="eyebrow">S1 — NMC CANON</p><h1>Artist Bible</h1><p>The non-negotiable source of truth for every NMC artist in the Cartel.</p></div><button class="button" id="newArtist">+ Add NMC artist</button></div>
+        <div class="section-intro"><div><p class="eyebrow">NMC CANON</p><h1>Artist Bible</h1><p>The non-negotiable source of truth for every NMC artist in the Cartel.</p></div><button class="button" id="newArtist">+ Add NMC artist</button></div>
 
         <!-- NMC CARTEL FOUNDATION -->
         <div class="bible-foundation">
@@ -233,27 +233,8 @@
         </div>
       </section>
 
-      <section class="view" id="track" data-title="Track DNA">
-        <div class="section-intro"><div><p class="eyebrow">S2 — TRACK DNA</p><h1>Define before generating.</h1><p>Make the emotional and commercial decision before Suno makes the musical one.</p></div><span class="status amber">DRAFTING</span></div>
-        <form class="panel form-grid" id="trackForm">
-          <label>Track title<input name="title" placeholder="Selected NMC track"></label>
-          <label>Artist<select name="artist" id="trackArtist"></select></label>
-          <label>Core emotion<input name="emotion" placeholder="Emotional engine"></label>
-          <label>Explicit level<select name="explicit"><option>Explicit</option><option>Clean</option></select></label>
-          <label class="wide">Conflict<textarea name="conflict" placeholder="The tension this NMC release must resolve"></textarea></label>
-          <label class="wide">Transformation<textarea name="transformation" placeholder="The emotional movement across the record"></textarea></label>
-          <label class="wide">Hook thesis<textarea name="hook" placeholder="The memorable truth the audience must retain"></textarea></label>
-          <label>Cultural anchor<input name="anchor" placeholder="Artist-specific cultural truth"></label>
-          <label>Commercial purpose<input name="purpose" placeholder="Role within the Naira Music release plan"></label>
-          <label>BPM<input name="bpm" type="number" min="60" max="200" value="142"></label>
-          <label>Key<select name="key"><option>D minor</option><option>G minor</option><option>A minor</option></select></label>
-          <label class="wide">Similarity risks<textarea name="risks">Do not become Zooboi: aggression must remain controlled, melodic and emotionally intelligent.</textarea></label>
-          <div class="form-actions wide"><span id="trackSaved" class="save-note"></span><button class="button" type="submit">Lock Track DNA</button></div>
-        </form>
-      </section>
-
       <section class="view" id="suno" data-title="Suno Engine">
-        <div class="section-intro"><div><p class="eyebrow">S3 — STUDIO</p><h1>Create a new song.</h1><p>Pick an artist, build the instrumental, lyrics and vocal, generate in Suno, then save the finished song straight to the catalogue.</p></div><span class="id-chip" id="sunoGenerationId">NEW SONG</span></div>
+        <div class="section-intro"><div><p class="eyebrow">STUDIO</p><h1>Create a new song.</h1><p>Pick an artist, build the instrumental, lyrics and vocal, generate in Suno, then save the finished song straight to the catalogue.</p></div><span class="id-chip" id="sunoGenerationId">NEW SONG</span></div>
 
 
         <div class="api-generate-panel" id="sunoLaunchPanel">
@@ -355,7 +336,7 @@
 
       <section class="view" id="signal" data-title="NMC Signal Radio">
         <div class="section-intro">
-          <div><p class="eyebrow">S8 — BROADCAST CONTROL</p><h1>NMC Signal</h1><p>Live radio feed, queue control, and one-click publish to the live rotation on NairaMusic.com.</p></div>
+          <div><p class="eyebrow">BROADCAST CONTROL</p><h1>NMC Signal</h1><p>Live radio feed, queue control, and one-click publish to the live rotation on NairaMusic.com.</p></div>
           <div style="display:flex;gap:8px;align-items:center">
             <span class="radio-status-dot" id="radioDot"></span>
             <span class="status" id="radioLiveStatus">LOADING…</span>
@@ -531,18 +512,6 @@
       <div class="form-actions"><button class="button ghost" type="button" id="cancelArtist">Cancel</button><button class="button" type="submit">Create draft Bible</button></div>
     </form>
   </dialog>
-  <dialog class="modal compact" id="trackDialog" aria-labelledby="trackDialogTitle">
-    <form id="newTrackForm">
-      <div class="modal-head"><div><p class="eyebrow">NAIRA MUSIC · TRACK INTAKE</p><h2 id="trackDialogTitle">Start a Track DNA record</h2></div><button type="button" class="close-button" id="closeTrack" aria-label="Close">×</button></div>
-      <div class="form-grid">
-        <label>Working title<input name="title" required placeholder="Untitled Signal"></label>
-        <label>NMC artist<select name="artist" id="newTrackArtist" required></select></label>
-        <label class="wide">Core emotion<input name="emotion" required placeholder="The emotional engine"></label>
-      </div>
-      <div class="form-actions"><button class="button ghost" type="button" id="cancelTrack">Cancel</button><button class="button" type="submit">Create Track DNA</button></div>
-    </form>
-  </dialog>
-  <dialog class="modal compact" id="splitDialog" aria-labelledby="splitDialogTitle"><form id="splitForm"><div class="modal-head"><div><p class="eyebrow">RIGHTS PARTICIPANT</p><h2 id="splitDialogTitle">Add split participant</h2></div><button type="button" class="close-button" id="closeSplit" aria-label="Close">×</button></div><div class="form-grid"><label class="wide">Legal name<input name="name" required placeholder="Person or company"></label><label>Role<select name="role"><option>Artist</option><option>Songwriter</option><option>Producer</option><option>Label</option><option>Publisher</option></select></label><label>IPI / CAE<input name="ipi" placeholder="Optional identifier"></label><label>Master share %<input type="number" name="master" min="0" max="100" step="0.01" value="0" required></label><label>Publishing share %<input type="number" name="publishing" min="0" max="100" step="0.01" value="0" required></label></div><div class="form-actions"><button class="button ghost" type="button" id="cancelSplit">Cancel</button><button class="button" type="submit">Add participant</button></div></form></dialog>
   <div class="toast" id="toast" role="status"></div>
   <script type="module" src="app.js"></script>
 </body>
