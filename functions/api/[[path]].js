@@ -153,7 +153,10 @@ export async function onRequest(context) {
     const list = Array.isArray(playlistRaw) ? playlistRaw : (playlistRaw && playlistRaw.playlist) || [];
     const cur = now || {};
     const norm = (s) => (s || "").toString().trim().toLowerCase();
-    let idx = list.findIndex((t) => norm(t.title) === norm(cur.title));
+    // Match on title AND artist first (two recordings can share a title),
+    // then fall back to title-only (audit #32).
+    let idx = list.findIndex((t) => norm(t.title) === norm(cur.title) && norm(t.artist) === norm(cur.artist));
+    if (idx < 0) idx = list.findIndex((t) => norm(t.title) === norm(cur.title));
     const en = idx >= 0 ? list[idx] : {};
     const current_item = cur.title ? {
       title: cur.title,
@@ -172,7 +175,9 @@ export async function onRequest(context) {
       const startMs = Date.parse(hasTz ? rawTs : rawTs + "Z");
       if (!isNaN(startMs)) {
         const elapsed = (Date.now() - startMs) / 1000;
-        remaining = Math.max(0, Math.round(en.duration - (((elapsed % en.duration) + en.duration) % en.duration)));
+        // Don't modulo-wrap: once a track's elapsed time passes its duration it
+        // is over (0 remaining), not restarting another countdown (audit #35).
+        remaining = (elapsed >= 0 && elapsed < en.duration) ? Math.round(en.duration - elapsed) : 0;
       } else remaining = en.duration;
     }
     const radio = {

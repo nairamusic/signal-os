@@ -60,7 +60,7 @@ function renderCatalogue(){if(!$('#catalogueTable'))return;const search=($('#cat
   const tkSave=p=>api('/api/site/track-save',{method:'POST',body:JSON.stringify(p)});
   const tkDelete=id=>api('/api/site/track-delete',{method:'POST',body:JSON.stringify({id})});
   const fileB64=f=>new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(f)});
-  const wpId=t=>t.wpPostId||t.id;
+  const wpId=t=>t.wpPostId||(/^[0-9]+$/.test(String(t.id))?t.id:null);
   async function refresh(){try{if(typeof syncTracksFromWP==='function')await syncTracksFromWP(true);}catch(e){}renderCatalogue();}
   window.openTrackEditor=function(track){
     const isEdit=!!(track&&track.id);
@@ -71,7 +71,7 @@ function renderCatalogue(){if(!$('#catalogueTable'))return;const search=($('#cat
       `<label>Artist name<input id="tkA" value="${esc(track&&track.artist)}"></label>`+
       `<label>Link to artist page (optional)<select id="tkAi"><option value="">— none —</option>${aOpts}</select></label>`+
       `<div class="nmc-row"><label>Genre<select id="tkG">${GENRES.map(g=>`<option${track&&track.genre===g?' selected':''}>${g}</option>`).join('')}</select></label><label>BPM<input id="tkB" type="number" value="${esc(track&&track.bpm)}"></label></div>`+
-      `<label>Status<select id="tkS"><option value="publish"${(!track||track.status!=='draft')?' selected':''}>Live (on radio)</option><option value="draft"${track&&track.status==='draft'?' selected':''}>Draft</option></select></label>`+
+      `<label>Status<select id="tkS"><option value="publish"${(track&&track.status!=='draft')?' selected':''}>Live (on radio)</option><option value="draft"${(!track||track.status==='draft')?' selected':''}>Draft</option></select></label>`+
       (isEdit?'':`<label>Audio file (mp3/wav)<input id="tkF" type="file" accept="audio/*"></label>`)+
       `<div class="nmc-modal-actions"><button class="button ghost" id="tkC">Cancel</button><button class="button" id="tkSv">${isEdit?'Save changes':'Add to catalogue'}</button></div>`+
       `<div class="nmc-modal-msg" id="tkM"></div></div>`;
@@ -415,7 +415,7 @@ function NMC_renderStudio(){if(!$('#klingPrompt'))return;const a=_studioArtist()
 (function(){
   const cp=$('#klingCopy');if(cp)cp.onclick=()=>{navigator.clipboard.writeText($('#klingPrompt').value||'');toast('Visual prompt copied');};
   const kl=$('#klingLog');if(kl)kl.onclick=()=>{const a=_studioArtist(),url=($('#klingResultUrl').value||'').trim();if(!a){toast('Select an artist first');return;}if(!url){toast('Paste the Kling URL');return;}const s=_studioStore(a);s.visuals=s.visuals||[];const type=/\.(mp4|mov|webm)(\?|$)/i.test(url)?'VIDEO':'IMAGE';s.visuals.push({url,type,at:new Date().toISOString()});save();_syncSoon();$('#klingResultUrl').value='';($('#klingState')||{}).textContent='Attached to '+a;NMC_renderStudio();toast('Visual attached to '+a);};
-  const kpc=$('#klingPushCover');if(kpc)kpc.onclick=async()=>{const t=currentTrack(),url=($('#klingResultUrl').value||'').trim();const wpId=t&&(t.wpPostId||(/^\d+$/.test(String(t.id))?t.id:(String(t.id).match(/(\d+)/)||[])[1]));if(!t){toast('Open a track from the Catalogue first');return;}if(!wpId){toast('This track isn’t on the website yet — publish it first');return;}if(!url){toast('Paste the Kling image URL');return;}($('#klingState')||{}).textContent='Pushing cover…';try{const r=await api('/api/site/track-cover',{method:'POST',body:JSON.stringify({id:Number(wpId),cover_url:url})});($('#klingState')||{}).textContent='Cover set on website ✓';toast('Track cover updated on nairamusic.com');logActivity('COVER PUSHED',`${t.artist} — ${t.title}`);}catch(e){($('#klingState')||{}).textContent='Endpoint not installed — see Desktop snippet';toast('Cover endpoint not installed yet');}};
+  const kpc=$('#klingPushCover');if(kpc)kpc.onclick=async()=>{const t=currentTrack(),url=($('#klingResultUrl').value||'').trim();const wpId=t&&(t.wpPostId||(/^\d+$/.test(String(t.id))?t.id:(String(t.id).match(/(\d+)/)||[])[1]));if(!t){toast('Open a track from the Catalogue first');return;}if(!wpId){toast('This track isn’t on the website yet — publish it first');return;}if(!url){toast('Paste the Kling image URL');return;}($('#klingState')||{}).textContent='Pushing cover…';try{const r=await api('/api/site/track-cover',{method:'POST',body:JSON.stringify({id:Number(wpId),cover_url:url})});($('#klingState')||{}).textContent='Cover set on website ✓';toast('Track cover updated on nairamusic.com');logActivity('COVER PUSHED',`${t.artist} — ${t.title}`);}catch(e){($('#klingState')||{}).textContent='Cover upload failed: '+(e&&e.message||e);toast('Cover upload failed — '+(e&&e.message||'see console'));}};
   // refresh studio when the launcher artist changes
   document.addEventListener('change',e=>{if(e.target&&e.target.id==='launchArtistSelect')NMC_renderStudio();});
 })();
