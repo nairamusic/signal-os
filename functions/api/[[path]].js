@@ -57,12 +57,21 @@ export async function onRequest(context) {
   // Suno is manual (no external API). Shape must match what the frontend reads:
   // health.connectors.suno / .wordpress → {configured, mode}.
   if (path === "health") {
+    // Actually probe WordPress instead of asserting it's live (audit #11).
+    let wpLive = false;
+    try {
+      const hr = await fetch(base + "/wp-json/nmcsignal/v1/status?_=" + Date.now(), {
+        headers: key ? { "X-Signal-Key": key, Accept: "application/json" } : { Accept: "application/json" },
+        cf: { cacheTtl: 0, cacheEverything: false },
+      });
+      wpLive = hr.ok;
+    } catch (e) { wpLive = false; }
     return json({
       ok: true,
-      mode: "live",
+      mode: wpLive ? "live" : "degraded",
       storage: { configured: true, backend: "wordpress-option" },
       connectors: {
-        wordpress: { configured: true, mode: "live" },
+        wordpress: { configured: !!key, mode: wpLive ? "live" : (key ? "unreachable" : "not-configured") },
         suno: { configured: false, mode: "manual" },
       },
     });
@@ -72,6 +81,11 @@ export async function onRequest(context) {
   // PUTs to save; os-state serves GET/POST, so map any write (PUT/POST) to a POST.
   // Keeps state synced with the website (persisted in WP, shared across devices).
   if (path === "state") {
+    // Only GET (load) and POST/PUT (save) are meaningful; reject anything else
+    // instead of silently treating it as a write (audit #36).
+    if (!["GET", "POST", "PUT"].includes(request.method)) {
+      return json({ error: "Method not allowed", path: "/api/state" }, 405);
+    }
     const method = request.method === "GET" ? "GET" : "POST";
     const init = { method, headers: { Accept: "application/json" } };
     if (key) init.headers["X-Signal-Key"] = key;
@@ -153,7 +167,9 @@ export async function onRequest(context) {
     const next_item = nx ? { title: nx.title || "", artist_name: nx.artist || "" } : {};
     let remaining = 0;
     if (current_item && en.duration && cur.started_at) {
-      const startMs = Date.parse(String(cur.started_at).replace(" ", "T") + "Z");
+      const rawTs = String(cur.started_at).replace(" ", "T");
+      const hasTz = /[Zz]$|[+-]\d\d:?\d\d$/.test(rawTs);
+      const startMs = Date.parse(hasTz ? rawTs : rawTs + "Z");
       if (!isNaN(startMs)) {
         const elapsed = (Date.now() - startMs) / 1000;
         remaining = Math.max(0, Math.round(en.duration - (((elapsed % en.duration) + en.duration) % en.duration)));
