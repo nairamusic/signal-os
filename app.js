@@ -264,8 +264,9 @@ function _deduplicateTracks(){
   const seen=new Map(); // titleKey → index in data.tracks
   const toRemove=new Set();
   data.tracks.forEach((t,i)=>{
-    const key=_deEnt(t.title||'').toLowerCase().trim();
-    if(!key){toRemove.add(i);return;}
+    const titleKey=_deEnt(t.title||'').toLowerCase().trim();
+    if(!titleKey){return;}
+    const key=titleKey+'|'+_deEnt(t.artist||'').toLowerCase().trim();
     if(!seen.has(key)){seen.set(key,i);return;}
     const keepIdx=seen.get(key),dupIdx=i;
     const keep=data.tracks[keepIdx],dup=data.tracks[dupIdx];

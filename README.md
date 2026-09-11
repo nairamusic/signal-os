@@ -8,46 +8,67 @@ Naira Music's creative, release, distribution and broadcast operating system.
 - **NMC / Naira Music Cartel** — the artist collective and roster
 - **NMC Signal** — radio, rotation and audience broadcast channel
 
-## Local operation
+## Architecture (current)
 
-Requires Node.js 22 or newer.
+SIGNAL//OS runs **entirely on Cloudflare Pages** — there is **no Node/Render/Docker
+backend** (the old server was retired). It is a static single-page app:
+
+- `index.html`, `app.js` and the `*.css` files — the dashboard UI (served as static assets).
+- `functions/api/[[path]].js` — a **Cloudflare Pages Function** that serves `/api/*`.
+  It is a thin proxy to WordPress (`nairamusic.com`) using a server-side signal key,
+  plus a synthesized `/api/health`, the `/api/state` ↔ WP `os-state` sync, an
+  `/api/ai/generate` proxy to Anthropic, and a composed `/api/radio/status`.
+
+State persists in a WordPress option (`nmcsignal/v1/os-state`) and in the browser,
+so it is shared across devices; the browser also keeps a local snapshot.
+
+## Local preview
+
+It is a static site, so any static server works, e.g.:
 
 ```powershell
-npm start
+npx serve .
 ```
 
-Open `http://127.0.0.1:4173`. Local mode binds only to loopback and does not require a password.
+Open the printed URL. The `/api/*` routes only work when deployed to Cloudflare Pages
+(or via `npx wrangler pages dev .`), because they run as Pages Functions.
 
-## Production container
+## Deployment
 
-1. Copy `.env.production.example` into the secure deployment environment.
-2. Replace `SIGNAL_ADMIN_PASSWORD` with a long unique secret.
-3. Keep provider tokens in the hosting platform's secret manager.
-4. Start with `docker compose up --build -d`.
+Deployment is **git push** — Cloudflare Pages auto-builds `main`:
 
-Compose publishes only to host loopback. Place an HTTPS reverse proxy or private access gateway in front for remote access.
+```powershell
+git push origin main
+```
 
-Persistent state and uploaded media use the `signal_os_data` volume. Back up that volume alongside SIGNAL//OS recovery exports.
+Set these in the Pages project → **Settings → Variables and Secrets** (never commit them;
+`.env*` are git-ignored):
+
+- `NMC_SIGNAL_KEY` (secret) — the `X-Signal-Key` the WP `nmcsignal` endpoints expect.
+- `WP_BASE_URL` (plain) — e.g. `https://nairamusic.com`.
+- `ANTHROPIC_API_KEY` (secret) — enables the Studio AI songwriter (`/api/ai/generate`).
 
 ## Modules
 
-Command, Artist Bible, Track DNA, Suno Engine, BLACK SIGNAL QC, Rights Ledger, Release Pipeline, NMC Signal, Automation, Distribution, Insights, Governance, Asset Vault, Splits, DSP Metadata, Integrations, Release Preflight and Operator Manual.
+Command, Catalogue, Studio (Suno/Kling/DistroKid launcher + logger), NMC Signal (radio),
+A&R, Artists and Settings.
 
-## Security
+## Security posture (honest state)
 
-- Secure HTTP headers and a restrictive Content Security Policy are enabled.
-- Password protection activates whenever `SIGNAL_ADMIN_PASSWORD` is set.
-- Non-local startup is refused without an administrator password.
-- Secrets remain server-side and are omitted from exports and browser storage.
-- Unconnected services remain in dry-run or handoff mode.
+- Secrets (`NMC_SIGNAL_KEY`, `ANTHROPIC_API_KEY`) live only in the Pages environment and
+  are never returned to the browser.
+- **The `/api/*` proxy does not authenticate the caller** — it attaches the server key to
+  every request. Because this is a static SPA, a client-side password cannot protect it.
+  **Access control should be enforced with Cloudflare Access** (Zero Trust) in front of the
+  Pages project, restricting `signal.nairamusic.com` to authorised accounts. Until that is
+  configured, treat all `/api/*` data as reachable by anyone who knows the URL.
+- Unconnected services remain in dry-run / handoff mode (responses carry `dryRun`/`stub`).
+- Suno has no external API — the Studio is a prompt-builder + manual logger, not auto-generation.
 - Live delivery remains subject to QC, rights, media, metadata and human approvals.
 
 ## Connectors
 
-Live actions require credentials for Suno, NairaMusic.com/WordPress, YouTube, Meta and TikTok. DistroKid remains a controlled operator handoff unless Naira Music obtains an approved partner integration.
-
-## Adding credentials later
-
-Put credentials in `.env` for local operation or `.env.production` for deployment, then restart SIGNAL//OS. `npm start` loads `.env` and an optional `.env.local` automatically. The Integrations Console reports only whether each required value exists; it never returns secret values to the browser. Spotify audio delivery remains routed through DistroKid.
-
-Test publishing with WordPress drafts and private or unlisted social/video content first.
+Live actions use the WordPress connector (via `NMC_SIGNAL_KEY`). Suno, YouTube, Meta and
+TikTok are assisted/manual until an approved API integration exists. DistroKid remains a
+controlled operator handoff. Test publishing with WordPress drafts and private/unlisted
+social content first.
