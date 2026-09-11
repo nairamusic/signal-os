@@ -212,7 +212,7 @@ async function renderRadio(){
     // Listeners — proxied through server to avoid CSP block
     api('/api/radio/listeners').then(c=>{if($('#radioListeners'))$('#radioListeners').textContent=c.count??'—'}).catch(()=>{});
     // Live badge
-    if(status){status.textContent='LIVE';dot.className='radio-status-dot';}
+    if(status){var _onAir=!!(ci&&ci.title);status.textContent=_onAir?'LIVE':'OFFLINE';dot.className='radio-status-dot'+(_onAir?'':' offline');}
     // Pending queue
     const pending=d.pending||[];
     const pendEl=$('#pendingCount');
@@ -320,7 +320,7 @@ async function syncTracksFromWP(silent=false){
     }
     // Merge playlist tracks — fills audio URLs and covers
     if(playlist.status==='fulfilled'){
-      (playlist.value.playlist||[]).forEach(pt=>{
+      ((Array.isArray(playlist.value)?playlist.value:playlist.value.playlist)||[]).forEach(pt=>{
         const rawArtist=pt.artist_name||pt.artist||'';
         const resolvedArtist=rawArtist?_normArtist(rawArtist):(_artistFromSlug(pt.slug)||'NMC');
         const ptTitle=_deEnt(pt.title);
