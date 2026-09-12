@@ -352,8 +352,14 @@ async function syncTracksFromWP(silent=false){
       const _liveIds=new Set(cat.value.tracks.map(t=>t.id));
       const _livePl=new Set((((playlist.status==='fulfilled'&&playlist.value)?(playlist.value.playlist||playlist.value):[])||[]).map(t=>_nt(t.title)));
       const _n=data.tracks.length;
-      data.tracks=data.tracks.filter(t=>(t.wpPostId&&_liveIds.has(t.wpPostId))||_livePl.has(_nt(t.title)));
-      const _pruned=_n-data.tracks.length;if(_pruned)updated+=_pruned;
+      const _keep=data.tracks.filter(t=>(t.wpPostId&&_liveIds.has(t.wpPostId))||_livePl.has(_nt(t.title)));
+      const _wouldPrune=_n-_keep.length;
+      // M1 SAFETY 2026-09-12: never let a partial/anomalous catalogue fetch mass-wipe the local cache.
+      // Apply the self-heal only for a SMALL number of stale entries; a large prune means the fetch
+      // was incomplete (a page, a transient 500), so keep the cache intact and warn instead.
+      const _pruneCap=Math.max(5,Math.ceil(_n*0.25));
+      if(_wouldPrune<=_pruneCap){ data.tracks=_keep; if(_wouldPrune)updated+=_wouldPrune; }
+      else { try{console.warn('[SignalOS] prune skipped: would drop '+_wouldPrune+'/'+_n+' tracks (cap '+_pruneCap+') — catalogue fetch looks partial');}catch(_e){} }
     }
     if(added||updated){
       save();renderOverview();renderPipeline();renderRotation();renderTrackSelector();
